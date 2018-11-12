@@ -1,3 +1,12 @@
 tooltip.is-tooltip-primary::before{
 	background:rgba(0,209,178,.1);
 }
+
+.line{
+	stroke: #b4a46a;
+	fill: url("#attendanceGradient");
+	stroke-width:2;
+}
+.attendanceDot{
+	fill:#b4a46a;
+}

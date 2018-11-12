@@ -1,4 +1,6 @@
 Vue.config.devtools = true;
+var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 var homeapp = new Vue({
   el: '#home',
@@ -6,10 +8,20 @@ var homeapp = new Vue({
   	return{
   		events: '',
       burgerIsActive: false,
-      thereAreEvents: false
+      thereAreEvents: false,
+      sampleData: []
   	}
   },
   methods:{
+    humanTime: function(jsTime){
+      //Friday, March 23, 2018 at 8:00pm
+      // jsTime = jsTime*1000.0;
+      var tempDate = new Date();
+      tempDate.setTime(jsTime);
+      var ampm;
+      tempDate.getHours()<12 ? ampm="am" : ampm="pm";
+      return ""+days[tempDate.getDay()]+", "+months[tempDate.getMonth()]+" "+tempDate.getDate()+", "+tempDate.getFullYear()+" at "+(tempDate.getHours()%12)+":"+(tempDate.getMinutes()<10 ? "0"+tempDate.getMinutes() : tempDate.getMinutes())+ampm;
+    },
     drawAttendanceGraph: function(){
       var margin = {
         "top":20,
@@ -24,23 +36,26 @@ var homeapp = new Vue({
         .attr("height", height)
         .attr("transform", "translate("+margin.left/2+", "+margin.top/2+")");
 
-      var gradient = svg.append("defs")
+      var gradient = d3.select("svg").append("defs")
         .append("linearGradient")
         .attr("id", "attendanceGradient")
         .attr("gradientTransform", "rotate(90)");
+      /*gradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#b4a46a")*/
       gradient.append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", "magenta")
-      gradient.append("stop")
-        .attr("offset", "10%")
-        .attr("stop-color", "cyan")
+        .attr("stop-color", "lightgrey")
       gradient.append("stop")
         .attr("offset", "100%")
-        .attr("stop-color", "grey");
+        .attr("stop-color", "darkgrey");
       var div = d3.select("#tooltip")
-          .attr("class", "tooltip")
+          .attr("class", "box")
           .attr("class", "hidden");
       var parseTime = d3.timeParse("%d-%b-%y");
+      sampleData = this.sampleData;
+      // console.log(sampleData);
+      d3.select("#score").html(sampleData.finalScore);
       sampleData.attendance.forEach(function (d){
         d.date = new Date(d.date*1000);
         // d.date = parseTime(d.date);
@@ -103,26 +118,37 @@ var homeapp = new Vue({
         .attr("class", "attendanceDot")
         .attr("stroke-width", 3)
         .on("mouseover touchdown", function(d){
-          div.attr("class", "shown");
-          div.append("p").html(d.name);
-          div.append("p").html(d.date);
-          div.append("p").html(d.pointChange+" points");
-          div.append("p").html(d.partialScore+"%");
-          div.append("p").html(d.explanation);
+          div.attr("class", "box shown");
+          div.append("p").html("<strong>"+d.name+"</strong>");
+          div.append("p").html(homeapp.humanTime(d.date));
+          div.append("p").html(d.pointChange+" points &#x23E9;"+d.partialScore+"%");
+          // div.append("p").html(d.partialScore+"%");
+          div.append("p").html("<em>"+d.explanation+"</em>");
           div.attr("style", "position:absolute;left:"+d3.event.pageX+"px;top:"+d3.event.pageY+"px;");
         })
         .on("mouseout touchup", function(d){
           div.attr("class", "hidden");
           div.html("");
         });
-    },
-    testThings: function(){
-      alert("hello pls");
     }
   },
   mounted(){
-    this.drawAttendanceGraph();
-    this.testThings();
+    var self = this;
+    axios.post('https://gleeclub.gatech.edu/buzz/api.php?action=attendance', {
+      choir: 'glee'
+    },{
+      headers:{
+        "x-identity": "msxGGuGYliMFRYaw63OKKxP+Yo4UBrRdfFvnzyG9ZLE="
+      }
+    })
+    .then(function (response) {
+      // console.log(response.data);
+      self.sampleData = response.data;
+      self.drawAttendanceGraph();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   	// var self = this;
    //  axios.post('https://gleeclub.gatech.edu/api.php?action=publicevents', {
    //    choir: 'glee'

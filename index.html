@@ -7,13 +7,13 @@
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script type="text/javascript" src="js/lib/d3.v4.min.js"></script>
 	<script type="text/javascript" src="js/sample.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/bulma.css">
 	<link rel="stylesheet" type="text/css" href="css/bulma-extensions.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta charset="UTF-8"/>
 	<title>Greasy Web</title>
 	<style type="text/css">
 		.has-bg-img { background: url('images/IMG_3277b.jpg')center center; background-size:cover; }
@@ -52,10 +52,11 @@
 			<section class="section">
 				<div class="container">
 					<h1 class="title">Score</h1>
-					<p>Right now you have an <strong>80</strong>. I need you to do better ty.</p>
+					<p>Right now you have a <strong id="score">???</strong>. I need you to do better ty.</p>
 					<svg></svg>
-					<p>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu">Email the officers</a> to cry about it.</p>
+					<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu">Email the officers</a> to cry about it.</p>
 				</div>
+				<div id="tooltip" class="box"></div>
 			</section>
 			<section class="section">
 				<div class="container">
@@ -63,15 +64,15 @@
 						<div class="column">
 							<h1 class="title">Next Up</h1>
 							<div class="box">
-								<p><a href="#">Rehearsal – Monday @ 6pm</a></p>
-								<p><a href="">Gig XYZ – Tuesday @ 9pm</a></p>
-								<p><a href="">Gig ABC – Thursday @ 5pm</a></p>
+								<p><a href="#">1⃣Rehearsal – Monday @ 6pm</a></p>
+								<p><a href="">2⃣Gig XYZ – Tuesday @ 9pm</a></p>
+								<p><a href="">3️⃣Gig ABC – Thursday @ 5pm</a></p>
 							</div>
 						</div>
 						<div class="column">
 							<h1 class="title">Volunteerism</h1>
 							<div class="box">
-								<p>OK so you've only been to three (3) volunteer gigs this semester and you need to go to five (V). So. Uh, do that.</p>
+								<p>OK so you've only been to three (3) volunteer gigs this semester and you need to go to five (V). So. Uh, you know, do that.</p>
 								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
 								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig YYY on April 23"><i class="fas fa-check-circle"></i></i></span>
 								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig ZZZ on April 26"><i class="fas fa-check-circle"></i></i></span>
@@ -88,4 +89,5 @@
 		</div><!-- container -->
 	</div><!-- vue -->
 </body>
+<script type="text/javascript" src="js/index.js"></script>
 </html>
