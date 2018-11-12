@@ -1,12 +1,13 @@
 Vue.config.devtools = true;
 var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var numbers = ["zero", "one", "two", "three", "four", "five"];
+var numerals = ["0", "I", "II", "III", "IV", "V"];
 
 var homeapp = new Vue({
   el: '#home',
   data(){
   	return{
-  		events: '',
       burgerIsActive: false,
       thereAreEvents: false,
       sampleData: []
@@ -56,6 +57,10 @@ var homeapp = new Vue({
       sampleData = this.sampleData;
       // console.log(sampleData);
       d3.select("#score").html(sampleData.finalScore);
+      d3.select("#gigCount").html(numbers[+sampleData.gigCount]);
+      d3.select("#gigusCountus").html(numerals[+sampleData.gigCount]);
+      d3.select("#gigReq").html(numbers[+sampleData.gigReq]);
+      d3.select("#gigusRequs").html(numerals[+sampleData.gigReq]);
       sampleData.attendance.forEach(function (d){
         d.date = new Date(d.date*1000);
         // d.date = parseTime(d.date);
@@ -142,7 +147,7 @@ var homeapp = new Vue({
       }
     })
     .then(function (response) {
-      // console.log(response.data);
+      console.log(response.data);
       self.sampleData = response.data;
       self.drawAttendanceGraph();
     })
