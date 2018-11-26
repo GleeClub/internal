@@ -73,11 +73,27 @@
 							<h1 class="title">Volunteerism</h1>
 							<div class="box">
 								<p>OK so you've only been to <span id="gigCount">???</span> (<span id="gigusCountus">???</span>) volunteer gigs this semester and you need to go to <span id="gigReq">???</span> (<span id="gigusRequs">???</span>). So. Uh, you know, do that.</p>
-								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig YYY on April 23"><i class="fas fa-check-circle"></i></i></span>
-								<span class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig ZZZ on April 26"><i class="fas fa-check-circle"></i></i></span>
-								<span class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
-								<span class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
+								<p>
+									<span v-if="sampleData">
+										<span v-for="n in gigDots">
+											<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name+' on '+humanTime(n.date)"><i class="fas fa-check-circle"></i>
+											</span>
+											<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i>
+											</span>
+										</span>
+									</span>
+								</p>
+
+								<!--<span v-if="this.sampleData && this.sampleData.gigCount > 0" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount > 1" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount > 2" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount > 3" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount > 4" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount < 1" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount < 2" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount < 3" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount < 4" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
+								<span v-if="this.sampleData && this.sampleData.gigCount < 5" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>-->
 							</div>
 						</div>
 					</div>

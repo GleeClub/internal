@@ -10,7 +10,8 @@ var homeapp = new Vue({
   	return{
       burgerIsActive: false,
       thereAreEvents: false,
-      sampleData: []
+      sampleData: null,
+      gigDots: null
   	}
   },
   methods:{
@@ -143,13 +144,34 @@ var homeapp = new Vue({
       choir: 'glee'
     },{
       headers:{
-        "x-identity": "msxGGuGYliMFRYaw63OKKxP+Yo4UBrRdfFvnzyG9ZLE="
+        "x-identity": "AcGuO6+kAWp11AQ+SKQWfD/bekyKoXkYkzh/vZNshuQ="
       }
     })
     .then(function (response) {
       console.log(response.data);
       self.sampleData = response.data;
       self.drawAttendanceGraph();
+      //gig req dots
+      // self.gigDots = new Array(self.sampleData.gigReq);
+      // self.gigDots[0] = {  
+      //    "eventNo":"2075",
+      //    "name":"Convocation 2017",
+      //    "date":1503253800,
+      //    "type":"volunteer",
+      //    "shouldAttend":true,
+      //    "didAttend":false,
+      //    "late":0,
+      //    "pointChange":-10,
+      //    "partialScore":100,
+      //    "explanation":"Full deduction for unexcused absence from event"
+      // };
+      self.gigDots = [];
+      for (var i = 0; i < self.sampleData.attendance.length; i++) {
+        if(self.sampleData.attendance[i].didAttend && self.sampleData.attendance[i].type == "volunteer"){
+          self.gigDots.push(self.sampleData.attendance[i]);
+          if(self.gigDots.length == self.sampleData.gigReq) break;
+        }
+      };
     })
     .catch(function (error) {
       console.log(error);
