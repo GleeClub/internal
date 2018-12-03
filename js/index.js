@@ -1,8 +1,8 @@
 Vue.config.devtools = true;
 var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var numbers = ["zero", "one", "two", "three", "four", "five"];
-var numerals = ["0", "I", "II", "III", "IV", "V"];
+var numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+var numerals = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
 var homeapp = new Vue({
   el: '#home',
@@ -58,8 +58,8 @@ var homeapp = new Vue({
       sampleData = this.sampleData;
       // console.log(sampleData);
       d3.select("#score").html(sampleData.finalScore);
-      d3.select("#gigCount").html(numbers[+sampleData.gigCount]);
-      d3.select("#gigusCountus").html(numerals[+sampleData.gigCount]);
+      +sampleData.gigCount <= +sampleData.gigReq ? d3.select("#gigCount").html(numbers[+sampleData.gigCount]) : d3.select("#gigCount").html(numbers[+sampleData.gigReq]);
+      +sampleData.gigCount <= +sampleData.gigReq ? d3.select("#gigusCountus").html(numerals[+sampleData.gigCount]) : d3.select("#gigusCountus").html(numerals[+sampleData.gigReq]);
       d3.select("#gigReq").html(numbers[+sampleData.gigReq]);
       d3.select("#gigusRequs").html(numerals[+sampleData.gigReq]);
       sampleData.attendance.forEach(function (d){
@@ -127,7 +127,7 @@ var homeapp = new Vue({
           div.attr("class", "box shown");
           div.append("p").html("<strong>"+d.name+"</strong>");
           div.append("p").html(homeapp.humanTime(d.date));
-          div.append("p").html(d.pointChange+" points &#x23E9;"+d.partialScore+"%");
+          div.append("p").html(d.pointChange+" points &#x25B6; "+d.partialScore+"%");
           // div.append("p").html(d.partialScore+"%");
           div.append("p").html("<em>"+d.explanation+"</em>");
           div.attr("style", "position:absolute;left:"+d3.event.pageX+"px;top:"+d3.event.pageY+"px;");
@@ -152,7 +152,7 @@ var homeapp = new Vue({
       self.sampleData = response.data;
       self.drawAttendanceGraph();
       //gig req dots
-      // self.gigDots = new Array(self.sampleData.gigReq);
+      self.gigDots = new Array(self.sampleData.gigReq);
       // self.gigDots[0] = {  
       //    "eventNo":"2075",
       //    "name":"Convocation 2017",
@@ -165,11 +165,13 @@ var homeapp = new Vue({
       //    "partialScore":100,
       //    "explanation":"Full deduction for unexcused absence from event"
       // };
-      self.gigDots = [];
+      // self.gigDots = [];
+      var dotcounter = 0;
       for (var i = 0; i < self.sampleData.attendance.length; i++) {
         if(self.sampleData.attendance[i].didAttend && self.sampleData.attendance[i].type == "volunteer"){
-          self.gigDots.push(self.sampleData.attendance[i]);
-          if(self.gigDots.length == self.sampleData.gigReq) break;
+          self.gigDots[dotcounter] = self.sampleData.attendance[i];
+          dotcounter++;
+          if(dotcounter+1 == self.sampleData.gigReq) break;
         }
       };
     })
