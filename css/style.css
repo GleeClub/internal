@@ -10,3 +10,7 @@ tooltip.is-tooltip-primary::before{
 .attendanceDot{
 	fill:#b4a46a;
 }
+
+table.is-fullwidth.is-hoverable:hover{
+	cursor: pointer;
+}
