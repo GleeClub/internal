@@ -127,7 +127,7 @@ var homeapp = new Vue({
           div.attr("class", "box shown");
           div.append("p").html("<strong>"+d.name+"</strong>");
           div.append("p").html(homeapp.humanTime(d.date));
-          div.append("p").html(d.pointChange+" points &#x25B6; "+d.partialScore+"%");
+          div.append("p").html(d.pointChange+" points <span v-else class='icon is-primary has-text-primary'><i class='fas fa-arrow-right'></i></span> "+d.partialScore+"%");
           // div.append("p").html(d.partialScore+"%");
           div.append("p").html("<em>"+d.explanation+"</em>");
           div.attr("style", "position:absolute;left:"+d3.event.pageX+"px;top:"+d3.event.pageY+"px;");

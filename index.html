@@ -54,7 +54,7 @@
 					<h1 class="title">Score</h1>
 					<p>Right now you have a <strong id="score">???</strong>. I need you to do better ty.</p>
 					<svg></svg>
-					<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu">Email the officers</a> to cry about it.</p>
+					<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
 				</div>
 				<div id="tooltip" class="box"></div>
 			</section>
@@ -78,8 +78,7 @@
 										<span v-for="n in gigDots">
 											<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name+' on '+humanTime(n.date)"><i class="fas fa-check-circle"></i>
 											</span>
-											<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i>
-											</span>
+											<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i></span>
 										</span>
 									</span>
 								</p>
