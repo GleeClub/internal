@@ -1,17 +1,13 @@
 <html>
 <head>
-	<!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-	<link rel="stylesheet" type="text/css" href="css/custom.css">-->
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script type="text/javascript" src="js/lib/d3.v4.min.js"></script>
-	<script type="text/javascript" src="js/sample.js"></script>
+	<script type="text/javascript" src="js/lib/moment.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/bulma.css">
 	<link rel="stylesheet" type="text/css" href="css/bulma-extensions.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-	<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta charset="UTF-8"/>
 	<title>Greasy Web</title>
@@ -22,37 +18,33 @@
 <body class="has-background-light">
 	<div id="home">
 		<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-		  <div class="navbar-brand">
-		    <a class="navbar-item" href="index.html">
-			<span class="icon is-small" style="width: 3vw;">
-				<i class="fas fa-home"></i>
-			</span>
-		    </a>
-
-		    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-bind:class="{'is-active': burgerIsActive}" v-on:click="burgerIsActive = !burgerIsActive">
-		      <span aria-hidden="true"></span>
-		      <span aria-hidden="true"></span>
-		      <span aria-hidden="true"></span>
-		    </a>
-		  </div>
+			<div class="navbar-brand">
+				<a class="navbar-item" href="index.html">
+				<span class="icon is-small" style="width: 3vw;">
+					<i class="fas fa-home"></i>
+				</span>
+				</a>
+				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-bind:class="{'is-active': burgerIsActive}" v-on:click="burgerIsActive = !burgerIsActive">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				</a>
+			</div>
 		  <div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
-		    <div class="navbar-start">
+			<div class="navbar-start">
 				<a class="navbar-item" href="events.html">Events</a>
 				<a class="navbar-item" href="music.html">Music</a>
 				<a class="navbar-item" href="account.html">Account</a>
 				<a class="navbar-item" href="officer.html">Flex on 'em</a>
-		    </div>
-
-		    <div class="navbar-end">
-		      <!-- navbar items -->
-		    </div>
+			</div>
+			<div class="navbar-end"></div>
 		  </div>
 		</nav>
 		<div> <!-- container -->
 			<section class="section">
 				<div class="container">
 					<h1 class="title">Score</h1>
-					<p>Right now you have a <strong id="score">???</strong>. I need you to do better ty.</p>
+					<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. I need you to do better ty.</p>
 					<svg></svg>
 					<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
 				</div>
@@ -64,35 +56,24 @@
 						<div class="column">
 							<h1 class="title">Next Up</h1>
 							<div class="box">
-								<p><span class="tag is-primary is-rounded">1</span><a href="#"> Rehearsal – Monday @ 6pm</a></p>
-								<p><span class="tag is-primary is-rounded">2</span><a href=""> Gig XYZ – Tuesday @ 9pm</a></p>
-								<p><span class="tag is-primary is-rounded">3</span><a href=""> Gig ABC – Thursday @ 5pm</a></p>
+								<p v-if="nextEvents.length == 0">No more events this semester!</p>
+								<p v-else v-for="(event, i) in nextEvents"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><a :href="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</a></p>
 							</div>
 						</div>
 						<div class="column">
 							<h1 class="title">Volunteerism</h1>
 							<div class="box">
-								<p>OK so you've only been to <span id="gigCount">???</span> (<span id="gigusCountus">???</span>) volunteer gigs this semester and you need to go to <span id="gigReq">???</span> (<span id="gigusRequs">???</span>). So. Uh, you know, do that.</p>
+								<p>OK so you've only been to {{ roman(attendance.gigCount) }} volunteer gigs this semester and you need to go to {{ roman(attendance.gigReq) }}. So. Uh, you know, do that.</p>
 								<p>
-									<span v-if="sampleData">
+									<span v-if="attendance">
 										<span v-for="n in gigDots">
-											<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name+' on '+humanTime(n.date)"><i class="fas fa-check-circle"></i>
+											<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle"></i>
 											</span>
 											<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i></span>
 										</span>
 									</span>
 								</p>
 
-								<!--<span v-if="this.sampleData && this.sampleData.gigCount > 0" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount > 1" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount > 2" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount > 3" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount > 4" class="icon is-tooltip-primary is-primary tooltip has-text-primary" data-tooltip="Gig XXX on April 20"><i class="fas fa-check-circle"></i></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount < 1" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount < 2" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount < 3" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount < 4" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>
-								<span v-if="this.sampleData && this.sampleData.gigCount < 5" class="icon has-text-grey-lighter"><i class="far fa-circle"></i></span>-->
 							</div>
 						</div>
 					</div>
@@ -101,5 +82,6 @@
 		</div><!-- container -->
 	</div><!-- vue -->
 </body>
+<script type="text/javascript" src="js/common.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 </html>
