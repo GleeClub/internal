@@ -16,7 +16,7 @@
 	</style>
 </head>
 <body class="has-background-light">
-	<div id="events">
+	<div id="roster">
 		<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
 			<div class="navbar-brand">
 				<a class="navbar-item" href="index.html">
@@ -43,42 +43,27 @@
 		<div> <!-- container -->
 			<section class="section">
 				<div class="container">
-					<div class="columns">
-						<div class="column">
-							<div class="box">
-								<table class="table is-fullwidth is-hoverable">
-									<thead></thead>
-									<tbody>
-										<tr v-for="event in events" @click="deets = event">
-											<td>{{ event.name }}</td>
-											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
-											<td>{{ event.type }}</td>
-											<td>{{ event.confirmed }}</td>
-										</tr>
-									</tbody>
-									<tfoot></tfoot>
-								</table>
-							</div>
-						</div>
-						<div class="column">
-							<div class="box" v-if="deets">
-								<h1>{{deets.name}}</h1>
-								<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
-								<p>{{ deets.comments }}</p>
-								<p>Confirmed: {{ deets.confirmed }}</p>
-								<p>Should Attend: {{ deets.shouldAttend }}</p>
-								<p>Attended: {{ deets.didAttend }}</p>
-								<p>Location: {{ deets.location }}</p>
-								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
-								<p>Points: {{ deets.points }}</p>
-								<p>Section: {{ deets.section }}</p>
-								<p>Type: {{ deets.type }}</p>
-								<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
-							</div>
-							<div v-else class="box">
-								<p>Select an event</p>
-							</div>
-						</div>
+					<div class="box">
+						<table class="table is-fullwidth">
+							<thead>
+								<tr>
+									<td>Name</td>
+									<td>Section</td>
+									<td>E-mail</td>
+									<td>Phone</td>
+									<td>Location</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="m in members">
+									<td>{{ m.name }}</td>
+									<td>{{ m.section }}</td>
+									<td><a :href="'mailto:' + m.email">{{ m.email }}</a></td>
+									<td><a :href="'tel:' + m.phone">{{ formatPhone(m.phone) }}</a></td>
+									<td>{{ m.location }}</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</section>
@@ -86,5 +71,5 @@
 	</div><!-- vue -->
 </body>
 <script type="text/javascript" src="js/common.js"></script>
-<script type="text/javascript" src="js/events.js"></script>
+<script type="text/javascript" src="js/roster.js"></script>
 </html>

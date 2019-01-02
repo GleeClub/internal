@@ -16,7 +16,7 @@
 	</style>
 </head>
 <body class="has-background-light">
-	<div id="home">
+	<div id="repertoire">
 		<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
 			<div class="navbar-brand">
 				<a class="navbar-item" href="index.html">
@@ -30,50 +30,58 @@
 				<span aria-hidden="true"></span>
 				</a>
 			</div>
-		  <div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
-			<div class="navbar-start">
-				<a class="navbar-item" href="events.html">Events</a>
-				<a class="navbar-item" href="music.html">Music</a>
-				<a class="navbar-item" href="account.html">Account</a>
-				<a class="navbar-item" href="officer.html">Flex on 'em</a>
+			<div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
+				<div class="navbar-start">
+					<a class="navbar-item is-active" href="events.html">Events</a>
+					<a class="navbar-item" href="music.html">Music</a>
+					<a class="navbar-item" href="account.html">Account</a>
+					<a class="navbar-item" href="officer.html">Flex on 'em</a>
+				</div>
+				<div class="navbar-end"></div>
 			</div>
-			<div class="navbar-end"></div>
-		  </div>
 		</nav>
 		<div> <!-- container -->
 			<section class="section">
 				<div class="container">
-					<h1 class="title">Score</h1>
-					<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. I need you to do better ty.</p>
-					<svg></svg>
-					<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
-				</div>
-				<div id="tooltip" class="box"></div>
-			</section>
-			<section class="section">
-				<div class="container">
 					<div class="columns">
 						<div class="column">
-							<h1 class="title">Next Up</h1>
 							<div class="box">
-								<p v-if="nextEvents.length == 0">No more events this semester!</p>
-								<p v-else v-for="(event, i) in nextEvents"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><a :href="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</a></p>
+								<h1 class="title is-4">Current</h1>
+								<table class="table is-fullwidth is-hoverable">
+									<tbody>
+										<tr v-for="song in current" @click="sel = song">
+											<td>{{ song.title }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="box">
+								<h1 class="title is-4">Other</h1>
+								<table class="table is-fullwidth is-hoverable">
+									<tbody>
+										<tr v-for="song in other" @click="sel = song">
+											<td>{{ song.title }}</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 						<div class="column">
-							<h1 class="title">Volunteerism</h1>
 							<div class="box">
-								<p>OK so you've only been to {{ roman(attendance.gigCount) }} volunteer gigs this semester and you need to go to {{ roman(attendance.gigReq) }}. So. Uh, you know, do that.</p>
-								<p>
-									<span v-if="attendance">
-										<span v-for="n in gigDots">
-											<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle"></i>
-											</span>
-											<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i></span>
-										</span>
-									</span>
-								</p>
-
+								<div v-if="sel">
+									<h1 class="title is-4">{{ sel.title }}</h1>
+									<strong>Key:</strong> {{ sel.key }} — <strong>Starting pitch:</strong> {{ sel.pitch }}
+									<p>{{ sel.info }}</p>
+									<table class="table is-fullwidth">
+										<tr v-for="link in sel.links">
+											<td>{{ link.type }}</td>
+											<td>
+												<a :href="getLink(link.type, link.target)">{{ link.name }}</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<p v-else>Select a song.</p>
 							</div>
 						</div>
 					</div>
@@ -83,5 +91,6 @@
 	</div><!-- vue -->
 </body>
 <script type="text/javascript" src="js/common.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/music.js"></script>
 </html>
+
