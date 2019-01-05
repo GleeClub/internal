@@ -1,17 +1,66 @@
-Vue.config.devtools = true;
-var dateFmtLong = "dddd, MMMM D [at] h:mm A"
+<template>
+	<div id="home">
+		<section class="section">
+			<div class="container">
+				<h1 class="title">Score</h1>
+				<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. I need you to do better ty.</p>
+				<svg></svg>
+				<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
+			</div>
+			<div id="tooltip" class="box"></div>
+		</section>
+		<section class="section">
+			<div class="container">
+				<div class="columns">
+					<div class="column">
+						<h1 class="title">Next Up</h1>
+						<div class="box">
+							<p v-if="nextEvents.length == 0">No more events this semester!</p>
+							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><a :href="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</a></p>
+						</div>
+					</div>
+					<div class="column">
+						<h1 class="title">Volunteerism</h1>
+						<div class="box">
+							<p>OK so you've only been to {{ common.roman(attendance.gigCount) }} volunteer gigs this semester and you need to go to {{ common.roman(attendance.gigReq) }}. So. Uh, you know, do that.</p>
+							<p>
+								<span v-if="attendance">
+									<span v-for="(n, i) in gigDots" :key="i">
+										<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle"></i>
+										</span>
+										<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i></span>
+									</span>
+								</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</template>
 
-var homeapp = new Vue({
-	el: '#home',
-	data: {
-		burgerIsActive: false,
-		attendance: {
-			attendance: [],
-			finalScore: 0,
-			gigCount: 0,
-			gigReq: 0
-		},
-		events: []
+<script>
+import common from "../common"
+import moment from "moment"
+import * as d3 from "d3"
+
+export default {
+	name: "home",
+	data() {
+		return {
+			common: common,
+			moment: moment,
+			d3: d3,
+			dateFmtLong: "dddd, MMMM D [at] h:mm A",
+			attendance: {
+				attendance: [],
+				finalScore: 0,
+				gigCount: 0,
+				gigReq: 0
+			},
+			events: []
+		}
 	},
 	methods: {
 		drawAttendanceGraph: function() {
@@ -35,8 +84,7 @@ var homeapp = new Vue({
 			var div = d3.select("#tooltip")
 				.attr("class", "box")
 				.attr("class", "hidden");
-			var parseTime = d3.timeParse("%d-%b-%y");
-			attendance = this.attendance;
+			var attendance = this.attendance;
 			attendance.attendance.forEach(function (d) { d.date = new Date(d.date * 1000); });
 			var x = d3.scaleTime()
 				.rangeRound([margin.left, width-margin.right]);
@@ -73,7 +121,7 @@ var homeapp = new Vue({
 			attendance.attendance.pop();
 
 			var svgContainer = svg;
-			var circles = svgContainer.selectAll("circle")
+			svgContainer.selectAll("circle")
 				.data(attendance.attendance)
 				.enter()
 				.append("circle")
@@ -82,18 +130,18 @@ var homeapp = new Vue({
 					if (d.partialScore > 0) return y(d.partialScore);
 					else return y(0);
 				})
-				.attr("r", function (d) { return 4; })
+				.attr("r", function () { return 4; })
 				.attr("class", "attendanceDot")
 				.attr("stroke-width", 3)
 				.on("mouseover touchdown", function(d) {
 					div.attr("class", "box shown");
 					div.append("p").html("<strong>" + d.name + "</strong>");
-					div.append("p").html(moment(d.date).format(dateFmtLong));
+					div.append("p").html(moment(d.date).format(this.dateFmtLong));
 					div.append("p").html(d.pointChange + " points <span v-else class='icon is-primary has-text-primary'><i class='fas fa-arrow-right'></i></span> " + d.partialScore + "%");
 					div.append("p").html("<em>" + d.explanation + "</em>");
 					div.attr("style", "position:absolute;left:" + d3.event.pageX + "px;top:" + d3.event.pageY + "px;");
 				})
-				.on("mouseout touchup", function(d) {
+				.on("mouseout touchup", function() {
 					div.attr("class", "hidden");
 					div.html("");
 				});
@@ -101,15 +149,15 @@ var homeapp = new Vue({
 	},
 	computed: {
 		gigDots() {
-			ret = new Array(this.attendance.gigReq);
-			var dotcounter = 0;
+			var ret = new Array(this.attendance.gigReq)
+			var dotcounter = 0
 			for (var i = 0; i < this.attendance.attendance.length; i++) {
 				if (this.attendance.attendance[i].gigCount) {
-					ret[dotcounter] = this.attendance.attendance[i];
-					dotcounter++;
-					if (dotcounter + 1 == this.attendance.gigReq) break;
+					ret[dotcounter] = this.attendance.attendance[i]
+					dotcounter++
+					if (dotcounter + 1 == this.attendance.gigReq) break
 				}
-			};
+			}
 			return ret
 		},
 		nextEvents() {
@@ -119,12 +167,13 @@ var homeapp = new Vue({
 	},
 	mounted() {
 		var self = this;
-		apiGet("attendance", {}, function(data) {
-			self.attendance = data;
-			self.drawAttendanceGraph();
+		common.apiGet("attendance", {}, function(data) {
+			self.attendance = data
+			self.drawAttendanceGraph()
 		})
-		apiGet("events", {}, function(data) {
-			self.events = data.events;
+		common.apiGet("events", {}, function(data) {
+			self.events = data.events
 		})
 	}
-});
+}
+</script>
