@@ -9,25 +9,11 @@ Vue.use(Router)
 
 export default new Router({
 	routes: [
-		{
-			path: "/",
-			name: "Home",
-			component: home
-		},
-		{
-			path: "/events",
-			name: "Events",
-			component: events
-		},
-		{
-			path: "/repertoire",
-			name: "Music",
-			component: repertoire
-		},
-		{
-			path: "/roster",
-			name: "People",
-			component: roster
-		},
+		{ path: "/", component: home },
+		{ path: "/events", component: events },
+		{ path: "/events/:id", name: "event", component: events, props: true },
+		{ path: "/repertoire", component: repertoire },
+		{ path: "/repertoire/:id", name: "song", component: repertoire, props: true },
+		{ path: "/roster", component: roster }
 	]
 })

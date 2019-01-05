@@ -8,7 +8,7 @@
 							<h1 class="title is-4">Current</h1>
 							<table class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in current" :key="song.id" @click="sel = song">
+									<tr v-for="song in current" :key="song.id" :class="{ 'is-selected': id && id == song.id }" @click="select(song)">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
@@ -18,7 +18,7 @@
 							<h1 class="title is-4">Other</h1>
 							<table class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in other" :key="song.id" @click="sel = song">
+									<tr v-for="song in other" :key="song.id" :class="{'is-selected': id && id == song.id}" @click="select(song)">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
@@ -54,11 +54,11 @@ import common from "../common"
 
 export default {
 	name: "repertoire",
+	props: ["id"],
 	data() {
 		return {
 			common: common,
 			songs: [],
-			sel: null,
 			musicDir: null
 		}
 	},
@@ -67,6 +67,9 @@ export default {
 			if (type == "pdf" || type == "midi") return this.musicDir + "/" + target
 			if (type == "video") return "https://youtu.be/" + target
 			return target
+		},
+		select(song) {
+			this.$router.replace({ name: 'song', params: { id: song.id } })
 		}
 	},
 	computed: {
@@ -79,6 +82,13 @@ export default {
 			return this.songs
 				.filter(function(s) { return !s.current })
 				.sort(function(a, b) { return a.title.localeCompare(b.title) })
+		},
+		sel() {
+			var id = parseInt(this.id)
+			if (!id || isNaN(id)) return null
+			var res = this.songs.filter(function(s) { return s.id == id })
+			if (res.length != 1) return null
+			return res[0]
 		}
 	},
 	mounted() {

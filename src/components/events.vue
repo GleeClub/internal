@@ -8,7 +8,7 @@
 							<table class="table is-fullwidth is-hoverable">
 								<thead></thead>
 								<tbody>
-									<tr v-for="event in events" :key="event.id" @click="deets = event">
+									<tr v-for="event in events" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id } })">
 										<td>{{ event.name }}</td>
 										<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 										<td>{{ event.type }}</td>
@@ -21,7 +21,7 @@
 					</div>
 					<div class="column">
 						<div class="box" v-if="deets">
-							<h1>{{deets.name}}</h1>
+							<h1>{{ deets.name }}</h1>
 							<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
 							<p>{{ deets.comments }}</p>
 							<p>Confirmed: {{ deets.confirmed }}</p>
@@ -50,18 +50,27 @@ import moment from "moment"
 
 export default {
 	name: "events",
+	props: ["id"],
 	data() {
 		return {
 			common: common,
 			moment: moment,
-			events: [],
-			deets: null
+			events: []
+		}
+	},
+	computed: {
+		deets() {
+			var sel = parseInt(this.id)
+			if (!sel || isNaN(sel)) return null
+			var res = this.events.filter(function(e) { return e.id == sel })
+			if (res.length != 1) return null
+			return res[0]
 		}
 	},
 	mounted() {
-		var self = this;
+		var self = this
 		common.apiGet("events", {}, function(data) {
-			self.events = data.events.reverse()
+			self.events = data.events.sort(function(a, b) { return b.call - a.call; })
 		})
 	}
 }
