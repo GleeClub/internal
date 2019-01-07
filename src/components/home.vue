@@ -3,9 +3,9 @@
 		<section class="section">
 			<div class="container">
 				<h1 class="title">Score</h1>
-				<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. I need you to do better ty.</p>
+				<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. {{ attendanceMessage }}</p>
 				<svg></svg>
-				<p><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
+				<p id="attendanceIssue"><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
 			</div>
 			<div id="tooltip" class="box"></div>
 		</section>
@@ -15,7 +15,7 @@
 					<div class="column">
 						<h1 class="title">Next Up</h1>
 						<div class="box">
-							<p v-if="nextEvents.length == 0">No more events this semester!</p>
+							<p v-if="nextEvents.length == 0">No more events this semester (:(</p>
 							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><a :href="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</a></p>
 						</div>
 					</div>
@@ -26,9 +26,9 @@
 							<p>
 								<span v-if="attendance">
 									<span v-for="(n, i) in gigDots" :key="i">
-										<span v-if="n" class="icon is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle"></i>
+										<span v-if="n" class="icon is-large is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle fa-2x"></i>
 										</span>
-										<span v-else class="icon is-primary has-text-primary"><i class="far fa-circle"></i></span>
+										<span v-else class="icon is-large is-primary has-text-primary"><i class="far fa-frown fa-2x"></i></span>
 									</span>
 								</span>
 							</p>
@@ -59,7 +59,8 @@ export default {
 				gigCount: 0,
 				gigReq: 0
 			},
-			events: []
+			events: [],
+			attendanceMessage: ""
 		}
 	},
 	methods: {
@@ -104,7 +105,7 @@ export default {
 						if (d.partialScore > 0) return y(d.partialScore);
 						else return y(0);
 					})
-					.curve(d3.curveMonotoneX);
+					.curve(d3.curveMonotoneX); //http://bl.ocks.org/d3indepth/b6d4845973089bc1012dec1674d3aff8
 			attendance.attendance.unshift({
 				"date": attendance.attendance[0].date,
 				"partialScore": 0
@@ -169,7 +170,22 @@ export default {
 		var self = this;
 		common.apiGet("attendance", {}, function(data) {
 			self.attendance = data
-			self.drawAttendanceGraph()
+			if(self.attendance.finalScore >= 90) self.attendanceMessage = "Ayy lamo nice."
+			if(self.attendance.finalScore < 90) self.attendanceMessage = "OK not bad, I guess."
+			if(self.attendance.finalScore < 80) self.attendanceMessage = "Pls"
+			if(self.attendance.finalScore < 70) self.attendanceMessage = "BRUH get it together."
+			if(self.attendance.attendance.length){
+				self.drawAttendanceGraph()
+			}
+			else{
+				var newp = d3.select(".container").insert("p", "svg")
+				newp.html("New semester, new you! Make it count.")
+				d3.select("svg").remove()
+				d3.select("#tooltip").remove()
+				d3.select(".container").select("p").append("br")
+				d3.select(".container").select("p").append("br")
+				d3.select("#attendanceIssue").remove()
+			}
 		})
 		common.apiGet("events", {}, function(data) {
 			self.events = data.events
