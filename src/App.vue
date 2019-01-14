@@ -18,6 +18,7 @@
 				<router-link to="/events" class="navbar-item">Events</router-link>
 				<router-link to="/repertoire" class="navbar-item">Music</router-link>
 				<router-link to="/roster" class="navbar-item">People</router-link>
+				<router-link to="/settings" class="navbar-item">Admin</router-link>
 			</div>
 			<div class="navbar-end"></div>
 			</div>

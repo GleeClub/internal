@@ -16,7 +16,7 @@
 						<h1 class="title">Next Up</h1>
 						<div class="box">
 							<p v-if="nextEvents.length == 0">No more events this semester (:(</p>
-							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><a :href="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</a></p>
+							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><router-link :to="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</router-link></p>
 						</div>
 					</div>
 					<div class="column">
@@ -59,8 +59,7 @@ export default {
 				gigCount: 0,
 				gigReq: 0
 			},
-			events: [],
-			attendanceMessage: ""
+			events: []
 		}
 	},
 	methods: {
@@ -164,20 +163,20 @@ export default {
 		nextEvents() {
 			var now = moment().unix()
 			return this.events.filter(function(e) { return e.call > now }).slice(0, 3)
+		},
+		attendanceMessage() {
+			if (this.attendance.finalScore >= 90) return "Ayy lamo nice."
+			else if (this.attendance.finalScore >= 80) return "OK not bad, I guess."
+			else if (this.attendance.finalScore >= 70) return "Pls"
+			else return "BRUH get it together."
 		}
 	},
 	mounted() {
 		var self = this;
 		common.apiGet("attendance", {}, function(data) {
 			self.attendance = data
-			if(self.attendance.finalScore >= 90) self.attendanceMessage = "Ayy lamo nice."
-			if(self.attendance.finalScore < 90) self.attendanceMessage = "OK not bad, I guess."
-			if(self.attendance.finalScore < 80) self.attendanceMessage = "Pls"
-			if(self.attendance.finalScore < 70) self.attendanceMessage = "BRUH get it together."
-			if(self.attendance.attendance.length){
-				self.drawAttendanceGraph()
-			}
-			else{
+			if (self.attendance.attendance.length) self.drawAttendanceGraph()
+			else {
 				var newp = d3.select(".container").insert("p", "svg")
 				newp.html("New semester, new you! Make it count.")
 				d3.select("svg").remove()

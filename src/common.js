@@ -9,6 +9,12 @@ export default {
 		return numbers[n] + " (" + numerals[n] + ")"
 	},
 
+	formatPhone(n) {
+		var s = n.toString()
+		if (s.length != 10) return s
+		return "(" + s.slice(0, 3) + ") " + s.slice(3, 6) + "-" + s.slice(6, 10)
+	},
+
 	apiGet(action, params, callback)
 	{
 		params.action = action

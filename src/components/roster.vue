@@ -15,10 +15,10 @@
 						</thead>
 						<tbody>
 							<tr v-for="m in members">
-								<td>{{ m.name }}</td>
+								<td><router-link :to="{ name: 'profile', params: { id: m.email } }">{{ m.name }}</router-link></td>
 								<td>{{ m.section }}</td>
 								<td><a :href="'mailto:' + m.email">{{ m.email }}</a></td>
-								<td><a :href="'tel:' + m.phone">{{ formatPhone(m.phone) }}</a></td>
+								<td><a :href="'tel:' + m.phone">{{ common.formatPhone(m.phone) }}</a></td>
 								<td>{{ m.location }}</td>
 							</tr>
 						</tbody>
@@ -38,13 +38,6 @@ export default {
 		return {
 			common: common,
 			members: []
-		}
-	},
-	methods: {
-		formatPhone(n) {
-			var s = n.toString()
-			if (s.length != 10) return s
-			return "(" + s.slice(0, 3) + ") " + s.slice(3, 6) + "-" + s.slice(7, 10)
 		}
 	},
 	mounted() {

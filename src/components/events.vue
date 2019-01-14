@@ -8,7 +8,7 @@
 							<table class="table is-fullwidth is-hoverable">
 								<thead></thead>
 								<tbody>
-									<tr v-for="event in events" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id } })">
+									<tr v-for="event in events" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })">
 										<td>{{ event.name }}</td>
 										<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 										<td>{{ event.type }}</td>
@@ -21,6 +21,14 @@
 					</div>
 					<div class="column">
 						<div class="box" v-if="deets">
+							<div class="tabs">
+								<ul>
+									<li :class="{ 'is-active': page && page == 'details' }"><router-link :to="{ name: 'event', params: { id: id, page: 'details' } }">Details</router-link></li>
+									<li :class="{ 'is-active': page && page == 'attendees' }"><router-link :to="{ name: 'event', params: { id: id, page: 'attendees' } }">Who's Attending</router-link></li>
+									<li :class="{ 'is-active': page && page == 'setlist' }"><router-link :to="{ name: 'event', params: { id: id, page: 'setlist' } }">Set List</router-link></li>
+									<li :class="{ 'is-active': page && page == 'carpools' }"><router-link :to="{ name: 'event', params: { id: id, page: 'carpools' } }">Carpools</router-link></li>
+								</ul>
+							</div>
 							<h1>{{ deets.name }}</h1>
 							<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
 							<p>{{ deets.comments }}</p>
@@ -50,7 +58,7 @@ import moment from "moment"
 
 export default {
 	name: "events",
-	props: ["id"],
+	props: ["id", "page"],
 	data() {
 		return {
 			common: common,
