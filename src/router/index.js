@@ -13,6 +13,7 @@ export default new Router({
 	routes: [
 		{ path: "/", component: home },
 		{ path: "/events", component: events },
+		{ path: "/events/:id", redirect: "/events/:id/details" },
 		{ path: "/events/:id/:page", name: "event", component: events, props: true },
 		{ path: "/repertoire", component: repertoire },
 		{ path: "/repertoire/:id", name: "song", component: repertoire, props: true },

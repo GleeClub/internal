@@ -14,26 +14,46 @@
 				</a>
 			</div>
 			<div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
-			<div class="navbar-start">
+			<div v-if="user.authenticated" class="navbar-start">
 				<router-link to="/events" class="navbar-item">Events</router-link>
 				<router-link to="/repertoire" class="navbar-item">Music</router-link>
 				<router-link to="/roster" class="navbar-item">People</router-link>
 				<router-link to="/settings" class="navbar-item">Admin</router-link>
 			</div>
-			<div class="navbar-end"></div>
+			<div v-else class="navbar-start">
+				<a class="navbar-item">Something</a>
+			</div>
+			<div v-if="user.authenticated" class="navbar-end">
+				<a class="navbar-item">{{ user.name }}</a>
+			</div>
 			</div>
 		</nav>
-		<router-view></router-view>
+		<router-view v-if="user.authenticated"></router-view>
+		<login v-else></login>
 	</div>
 </template>
 
 <script>
+import common from "./common"
+import login from "@/components/login"
+
 export default {
 	name: "app",
+	components: { login },
 	data() {
 		return {
-			burgerIsActive: false
+			burgerIsActive: false,
+			common: common,
+			user: {
+				"name": "Loading..."
+			}
 		}
+	},
+	mounted() {
+		var self = this
+		common.apiGet("user", {}, function(data) {
+			self.user = data
+		})
 	}
 }
 </script>

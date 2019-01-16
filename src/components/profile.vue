@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import common from "../common"
+import common from "@/common"
 import moment from "moment"
 
 export default {

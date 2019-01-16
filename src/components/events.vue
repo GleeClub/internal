@@ -29,18 +29,21 @@
 									<li :class="{ 'is-active': page && page == 'carpools' }"><router-link :to="{ name: 'event', params: { id: id, page: 'carpools' } }">Carpools</router-link></li>
 								</ul>
 							</div>
-							<h1>{{ deets.name }}</h1>
-							<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
-							<p>{{ deets.comments }}</p>
-							<p>Confirmed: {{ deets.confirmed }}</p>
-							<p>Should Attend: {{ deets.shouldAttend }}</p>
-							<p>Attended: {{ deets.didAttend }}</p>
-							<p>Location: {{ deets.location }}</p>
-							<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
-							<p>Points: {{ deets.points }}</p>
-							<p>Section: {{ deets.section }}</p>
-							<p>Type: {{ deets.type }}</p>
-							<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
+							<div v-if="page == 'details'">
+								<h1>{{ deets.name }}</h1>
+								<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
+								<p>{{ deets.comments }}</p>
+								<p>Confirmed: {{ deets.confirmed }}</p>
+								<p>Should Attend: {{ deets.shouldAttend }}</p>
+								<p>Attended: {{ deets.didAttend }}</p>
+								<p>Location: {{ deets.location }}</p>
+								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
+								<p>Points: {{ deets.points }}</p>
+								<p>Section: {{ deets.section }}</p>
+								<p>Type: {{ deets.type }}</p>
+								<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
+							</div>
+							<component v-else :is="page" :event="deets.id"></component>
 						</div>
 						<div v-else class="box">
 							<p>Select an event</p>
@@ -53,12 +56,20 @@
 </template>
 
 <script>
-import common from "../common"
+import common from "@/common"
 import moment from "moment"
+import attendees from "./event/attendees"
+import carpools from "./event/carpools"
+import setlist from "./event/setlist"
 
 export default {
 	name: "events",
 	props: ["id", "page"],
+	components: {
+		attendees,
+		carpools,
+		setlist
+	},
 	data() {
 		return {
 			common: common,

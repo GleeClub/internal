@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import common from "../common"
+import common from "@/common"
 import moment from "moment"
 import * as d3 from "d3"
 
