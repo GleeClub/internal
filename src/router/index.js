@@ -4,7 +4,7 @@ import home from "@/components/home"
 import events from "@/components/events"
 import repertoire from "@/components/repertoire"
 import roster from "@/components/roster"
-import settings from "@/components/settings"
+import officer from "@/components/officer"
 import profile from "@/components/profile"
 
 Vue.use(Router)
@@ -19,7 +19,7 @@ export default new Router({
 		{ path: "/repertoire/:id", name: "song", component: repertoire, props: true },
 		{ path: "/roster", component: roster },
 		{ path: "/roster/:id", name: "profile", component: profile, props: true },
-		{ path: "/settings", component: settings },
-		{ path: "/settings/:page", name: "settings", component: settings, props: true }
+		{ path: "/officer", component: officer },
+		{ path: "/officer/:page", name: "officer", component: officer, props: true }
 	]
 })

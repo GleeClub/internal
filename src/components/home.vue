@@ -192,3 +192,15 @@ export default {
 	}
 }
 </script>
+
+<style>
+.line {
+	stroke: #b4a46a;
+	fill: url("#attendanceGradient");
+	stroke-width: 2;
+}
+.attendanceDot {
+	fill: #b4a46a;
+}
+</style>
+

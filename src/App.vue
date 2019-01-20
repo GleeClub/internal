@@ -18,18 +18,18 @@
 				<router-link to="/events" class="navbar-item">Events</router-link>
 				<router-link to="/repertoire" class="navbar-item">Music</router-link>
 				<router-link to="/roster" class="navbar-item">People</router-link>
-				<router-link to="/settings" class="navbar-item">Admin</router-link>
+				<router-link to="/officer" class="navbar-item">Admin</router-link>
 			</div>
 			<div v-else class="navbar-start">
-				<a class="navbar-item">Something</a>
+				<!--a class="navbar-item">Something</a-->
 			</div>
 			<div v-if="user.authenticated" class="navbar-end">
-				<a class="navbar-item">{{ user.name }}</a>
+				<a class="navbar-item" @click="logout">{{ user.name }}</a>
 			</div>
 			</div>
 		</nav>
 		<router-view v-if="user.authenticated"></router-view>
-		<login v-else></login>
+		<login v-else @reload="loadUser"></login>
 	</div>
 </template>
 
@@ -39,21 +39,32 @@ import login from "@/components/login"
 
 export default {
 	name: "app",
-	components: { login },
+	components: {
+		login
+	},
 	data() {
 		return {
-			burgerIsActive: false,
 			common: common,
+			burgerIsActive: false,
 			user: {
-				"name": "Loading..."
+				authenticated: false
 			}
 		}
 	},
+	methods: {
+		loadUser() {
+			var self = this
+			common.apiGet("user", {}, function(data) {
+				self.user = data
+			})
+		},
+		logout() {
+			this.$cookies.remove("email")
+			this.loadUser()
+		}
+	},
 	mounted() {
-		var self = this
-		common.apiGet("user", {}, function(data) {
-			self.user = data
-		})
+		this.loadUser()
 	}
 }
 </script>
