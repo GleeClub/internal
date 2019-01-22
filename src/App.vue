@@ -14,7 +14,7 @@
 				</a>
 			</div>
 			<div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
-			<div v-if="user.authenticated" class="navbar-start">
+			<div v-if="common.user.authenticated" class="navbar-start">
 				<router-link to="/events" class="navbar-item">Events</router-link>
 				<router-link to="/repertoire" class="navbar-item">Music</router-link>
 				<router-link to="/roster" class="navbar-item">People</router-link>
@@ -23,44 +23,50 @@
 			<div v-else class="navbar-start">
 				<!--a class="navbar-item">Something</a-->
 			</div>
-			<div v-if="user.authenticated" class="navbar-end">
-				<a class="navbar-item" @click="logout">{{ user.name }}</a>
+			<div v-if="common.user.authenticated" class="navbar-end">
+				<router-link :to="{ name: 'profile', params: { id: common.user.id } }" class="navbar-item">{{ common.user.name }}</router-link>
 			</div>
 			</div>
 		</nav>
-		<router-view v-if="user.authenticated"></router-view>
-		<login v-else @reload="loadUser"></login>
+		<router-view v-if="common.user.authenticated"></router-view>
+		<component v-else :is="landingPage" @reload="loadUser" @switch-page="landingPage = $event"></component>
 	</div>
 </template>
 
 <script>
 import common from "./common"
 import login from "@/components/login"
+import register from "@/components/edit-profile"
+import forgot from "@/components/forgot"
 
 export default {
 	name: "app",
 	components: {
-		login
+		login,
+		register,
+		forgot
 	},
 	data() {
 		return {
 			common: common,
-			burgerIsActive: false,
-			user: {
-				authenticated: false
-			}
+			landingPage: "login",
+			burgerIsActive: false
 		}
 	},
 	methods: {
 		loadUser() {
 			var self = this
 			common.apiGet("user", {}, function(data) {
-				self.user = data
+				self.common.user = data
+				if (self.common.user.authenticated) {
+					common.apiGet("members", {}, function(data) {
+						self.common.members = {}
+						for (var member of data.members) {
+							self.common.members[member.email] = member.name
+						}
+					})
+				}
 			})
-		},
-		logout() {
-			this.$cookies.remove("email")
-			this.loadUser()
 		}
 	},
 	mounted() {
@@ -68,7 +74,3 @@ export default {
 	}
 }
 </script>
-
-<style>
-
-</style>

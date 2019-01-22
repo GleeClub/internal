@@ -6,6 +6,7 @@ import repertoire from "@/components/repertoire"
 import roster from "@/components/roster"
 import officer from "@/components/officer"
 import profile from "@/components/profile"
+import editProfile from "@/components/edit-profile"
 
 Vue.use(Router)
 
@@ -20,6 +21,7 @@ export default new Router({
 		{ path: "/roster", component: roster },
 		{ path: "/roster/:id", name: "profile", component: profile, props: true },
 		{ path: "/officer", component: officer },
-		{ path: "/officer/:page", name: "officer", component: officer, props: true }
+		{ path: "/officer/:page", name: "officer", component: officer, props: true },
+		{ path: "/profile", component: editProfile },
 	]
 })

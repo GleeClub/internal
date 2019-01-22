@@ -2,19 +2,23 @@
 	<div id="home">
 		<section class="section">
 			<div class="container">
-						<div class="box">
-							{{ info.name }}<br>
-							{{ info.positions.join(", ") }}<br>
-							{{ info.quote }}<br>
-							{{ info.email }}<br>
-							{{ common.formatPhone(info.phone) }}<br>
-							{{ info.location }}<br>
-							{{ info.major }}<br>
-							{{ info.car }}<br>
-							{{ info.techYear }}<br>
-							{{ info.section }}<br>
-							<img :src="info.picture">
-						</div>
+				<div class="box">
+					{{ info.name }}<br>
+					{{ info.positions.join(", ") }}<br>
+					{{ info.quote }}<br>
+					{{ info.email }}<br>
+					{{ common.formatPhone(info.phone) }}<br>
+					{{ info.location }}<br>
+					{{ info.major }}<br>
+					{{ info.car }}<br>
+					{{ info.techYear }}<br>
+					{{ info.section }}<br>
+					<div v-if="id == common.user.id">
+					<button type="button" class="button" @click="logout">Log Out</button>
+					<router-link to="/profile">Edit</router-link>
+					</div>
+					<img :src="info.picture">
+				</div>
 			</div>
 		</section>
 	</div>
@@ -32,6 +36,12 @@ export default {
 			common: common,
 			moment: moment,
 			info: null
+		}
+	},
+	methods: {
+		logout() {
+			this.$cookies.remove("email")
+			location.reload() // TODO Maybe just load the login age without refreshing the whole page
 		}
 	},
 	mounted() {

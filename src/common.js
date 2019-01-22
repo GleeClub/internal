@@ -1,6 +1,12 @@
 import axios from "axios"
 
 export default {
+	user: {
+		authenticated: false
+	},
+
+	members: {},
+
 	roman(n)
 	{
 		var numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"]
