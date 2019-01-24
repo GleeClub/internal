@@ -9,3 +9,7 @@ table.is-fullwidth.is-hoverable:hover {
 html, body, #app, section, .container, .columns {
 	height: 100%;
 }
+
+html{
+	background-color: #fafafa;
+}
