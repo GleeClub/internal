@@ -15,8 +15,8 @@
 						</thead>
 						<tbody>
 							<tr v-for="m in members">
-								<td><router-link :to="{ name: 'profile', params: { id: m.email } }">{{ m.name }}</router-link></td>
-								<td>{{ m.section }}</td>
+								<td><router-link :to="{ name: 'profile', params: { id: m.email } }">{{ m.name.full }}</router-link></td>
+								<td>{{ common.info.sections[m.section] }}</td>
 								<td><a :href="'mailto:' + m.email">{{ m.email }}</a></td>
 								<td><a :href="'tel:' + m.phone">{{ common.formatPhone(m.phone) }}</a></td>
 								<td>{{ m.location }}</td>

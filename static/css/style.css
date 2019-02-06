@@ -6,10 +6,18 @@ table.is-fullwidth.is-hoverable:hover {
 	cursor: pointer;
 }
 
-html, body, #app, section, .container, .columns {
+html, body, #app {
 	height: 100%;
 }
 
-html{
+html {
 	background-color: #fafafa;
+}
+
+div.container.fullheight {
+	height: 80%;
+}
+
+div.container.fullheight div.columns {
+	height: 100%;
 }

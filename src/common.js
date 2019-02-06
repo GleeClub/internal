@@ -4,7 +4,7 @@ export default {
 	user: {
 		authenticated: false
 	},
-
+	info: {},
 	members: {},
 
 	roman(n)
@@ -13,6 +13,16 @@ export default {
 		var numerals = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"]
 		if (n > 20) return "" + n
 		return numbers[n] + " (" + numerals[n] + ")"
+	},
+
+	isGig(event)
+	{
+		return event.type == "volunteer" || event.type == "tutti"
+	},
+
+	memberName(email) {
+		if (this.members[email]) return this.members[email].full
+		return "(" + email + ")"
 	},
 
 	formatPhone(n) {

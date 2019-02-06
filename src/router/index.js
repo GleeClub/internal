@@ -7,6 +7,7 @@ import roster from "@/components/roster"
 import officer from "@/components/officer"
 import profile from "@/components/profile"
 import editProfile from "@/components/edit-profile"
+import confirmAccount from "@/components/confirm-account"
 
 Vue.use(Router)
 
@@ -23,5 +24,6 @@ export default new Router({
 		{ path: "/officer", component: officer },
 		{ path: "/officer/:page", name: "officer", component: officer, props: true },
 		{ path: "/profile", component: editProfile },
+		{ path: "/confirm", name: "confirm", component: confirmAccount },
 	]
 })

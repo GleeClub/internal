@@ -24,11 +24,24 @@
 				<!--a class="navbar-item">Something</a-->
 			</div>
 			<div v-if="common.user.authenticated" class="navbar-end">
-				<router-link :to="{ name: 'profile', params: { id: common.user.id } }" class="navbar-item">{{ common.user.name }}</router-link>
+				<router-link :to="{ name: 'profile', params: { id: common.user.id } }" class="navbar-item">{{ common.user.name.full }}</router-link>
 			</div>
 			</div>
 		</nav>
-		<router-view v-if="common.user.authenticated"></router-view>
+		<section v-if="showConfirm && $route.name != 'confirm'" id="confirm-note">
+			<div class="notification is-info">
+				<button class="delete" @click="showConfirm = false"></button>
+				<div id="confirm-layout">
+					<div>
+						Welcome!  Feel free to browse the site, but if you're going to be active in Glee Club this semester, please confirm your account so we can get you into the system.
+					</div>
+					<div>
+						<router-link :to="{ name: 'confirm' }" id="confirm-button" class="button is-info is-inverted is-outlined">Confirm</router-link>
+					</div>
+				</div>
+			</div>
+		</section>
+		<router-view v-if="common.user.authenticated" @reload="loadUser"></router-view>
 		<component v-else :is="landingPage" @reload="loadUser" @switch-page="landingPage = $event"></component>
 	</div>
 </template>
@@ -50,12 +63,16 @@ export default {
 		return {
 			common: common,
 			landingPage: "login",
+			showConfirm: false,
 			burgerIsActive: false
 		}
 	},
 	methods: {
 		loadUser() {
 			var self = this
+			common.apiGet("info", {}, function(data) {
+				self.common.info = data.info
+			})
 			common.apiGet("user", {}, function(data) {
 				self.common.user = data
 				if (self.common.user.authenticated) {
@@ -65,6 +82,7 @@ export default {
 							self.common.members[member.email] = member.name
 						}
 					})
+					self.showConfirm = self.common.user.enrollment == "inactive";
 				}
 			})
 		}
@@ -74,3 +92,21 @@ export default {
 	}
 }
 </script>
+
+<style>
+#confirm-note
+{
+	margin: 2em;
+	margin-bottom: -1em;
+}
+#confirm-layout
+{
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+#confirm-button
+{
+	margin: 0 2em;
+}
+</style>

@@ -12,7 +12,38 @@
 										<td>{{ event.name }}</td>
 										<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 										<td>{{ event.type }}</td>
-										<td>{{ event.confirmed }}</td>
+										<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
+											<div @click.stop>
+												<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded is-success" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend">
+												<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
+											</div>
+											<div class="is-size-7" style="white-space: nowrap">
+												<div v-if="event.shouldAttend" class="has-text-success">
+													Attending
+												</div>
+												<div v-else class="has-text-danger">
+													Not attending
+												</div>
+											</div>
+										</td>
+										<td v-else style="text-align: center">
+											<div :class="{ 'is-size-7': true, 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
+												<span class="icon is-medium">
+													<i v-if="event.didAttend" class="fas fa-check fa-lg"></i>
+													<i v-else class="fas fa-times fa-lg"></i>
+												</span>
+												<br>
+												<span v-if="event.didAttend">
+													Attended
+												</span>
+												<span v-else-if="!event.shouldAttend">
+													Excused
+												</span>
+												<span v-else>
+													Missed
+												</span>
+											</div>
+										</td>
 									</tr>
 								</tbody>
 								<tfoot></tfoot>
@@ -25,8 +56,8 @@
 								<ul>
 									<li :class="{ 'is-active': page && page == 'details' }"><router-link :to="{ name: 'event', params: { id: id, page: 'details' } }">Details</router-link></li>
 									<li :class="{ 'is-active': page && page == 'attendees' }"><router-link :to="{ name: 'event', params: { id: id, page: 'attendees' } }">Who's Attending</router-link></li>
-									<li :class="{ 'is-active': page && page == 'setlist' }"><router-link :to="{ name: 'event', params: { id: id, page: 'setlist' } }">Set List</router-link></li>
-									<li :class="{ 'is-active': page && page == 'carpools' }"><router-link :to="{ name: 'event', params: { id: id, page: 'carpools' } }">Carpools</router-link></li>
+									<li v-if="common.isGig(deets)" :class="{ 'is-active': page && page == 'setlist' }"><router-link :to="{ name: 'event', params: { id: id, page: 'setlist' } }">Set List</router-link></li>
+									<li v-if="common.isGig(deets)" :class="{ 'is-active': page && page == 'carpools' }"><router-link :to="{ name: 'event', params: { id: id, page: 'carpools' } }">Carpools</router-link></li>
 								</ul>
 							</div>
 							<div v-if="page == 'details'">
@@ -84,6 +115,13 @@ export default {
 			var res = this.events.filter(function(e) { return e.id == sel })
 			if (res.length != 1) return null
 			return res[0]
+		}
+	},
+	methods: {
+		rsvp(event) {
+			this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) { }, function(data) {
+				event.shouldAttend = !event.shouldAttend
+			})
 		}
 	},
 	mounted() {

@@ -3,7 +3,7 @@
 		<table class="table is-fullwidth is-hoverable">
 			<tbody>
 				<tr v-for="member in attendees" :key="member.id">
-					<td><router-link :to="{ name: 'profile', params: { id: member.id } }">{{ common.members[member.id] }}</router-link></td>
+					<td><router-link :to="{ name: 'profile', params: { id: member.id } }">{{ common.memberName(member.id) }}</router-link></td>
 					<td>{{ member.shouldAttend ? "attending" : "not attending" }}</td>
 					<td>{{ member.confirmed ? "confirmed" : "unconfirmed" }}</td>
 				</tr>

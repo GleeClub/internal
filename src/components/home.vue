@@ -23,7 +23,7 @@
 						<h1 class="title">Volunteerism</h1>
 						<div class="box">
 							<p>OK so you've only been to {{ common.roman(attendance.gigCount) }} volunteer gigs this semester and you need to go to {{ common.roman(attendance.gigReq) }}. So. Uh, you know, do that.</p>
-							<p>
+							<p style="text-align: center">
 								<span v-if="attendance">
 									<span v-for="(n, i) in gigDots" :key="i">
 										<span v-if="n" class="icon is-large is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle fa-2x"></i>
@@ -162,7 +162,10 @@ export default {
 		},
 		nextEvents() {
 			var now = moment().unix()
-			return this.events.filter(function(e) { return e.call > now }).slice(0, 3)
+			return this.events
+				.filter(function(e) { return e.call > now })
+				.sort(function(a, b) { return a.call - b.call })
+				.slice(0, 5)
 		},
 		attendanceMessage() {
 			if (this.attendance.finalScore >= 90) return "Ayy lamo nice."
