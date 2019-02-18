@@ -21,7 +21,7 @@
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
 												<div @click.stop>
-													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded" :class="{ 'is-success': event.confirmed, 'is-danger': !event.confirmed, 'is-outlined': !event.confirmed }" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend && event.confirmed">
+													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded" :class="{ 'is-success': event.confirmed, 'is-danger': !event.confirmed, 'is-outlined': !event.confirmed }" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.disabled != null && event.shouldAttend && event.confirmed">
 													<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
 												</div>
 												<div class="is-size-7" style="white-space: nowrap">
@@ -85,7 +85,7 @@
 								<p>Section: {{ deets.section }}</p>
 								<p>Type: {{ deets.type }}</p>
 								<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
-								<router-link class="button" v-if="moment.unix(deets.release).isAfter(moment()) && deets.cannotDecline" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
+								<router-link class="button" v-if="moment.unix(deets.release).isAfter(moment()) && deets.disabled" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
 							</div>
 							<component v-else :is="common.kebabToCamel(page)" @switch-page="$router.push({ name: 'event', params: { id: id, page: $event } })" :event="deets.id"></component>
 						</div>
@@ -151,9 +151,12 @@ export default {
 				event.shouldAttend = !event.shouldAttend
 				this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) {
 					event.confirmed = true
+					event.disabled = data.disabled
 				})
 			}
-			else this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) { }, function(data) {
+			else this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) {
+				event.disabled = data.disabled
+			}, function(data) {
 				event.shouldAttend = !event.shouldAttend
 			})
 		}
