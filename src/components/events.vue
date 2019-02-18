@@ -20,37 +20,36 @@
 											<td>{{ event.name }}</td>
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
-												<div @click.stop>
+												<!-- <div @click.stop>
 													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded" :class="{ 'is-success': event.confirmed, 'is-danger': !event.confirmed, 'is-outlined': !event.confirmed }" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.disabled != null && event.shouldAttend && event.confirmed">
 													<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
+												</div> -->
+												<div v-if="event.confirmed && event.shouldAttend" class="has-text-success">
+													<span class="icon is-medium">
+														<i class="fas fa-check fa-lg"></i>
+													</span>
 												</div>
-												<div class="is-size-7" style="white-space: nowrap">
-													<div v-if="!event.confirmed" class="has-text-danger">
-														Unconfirmed
-													</div>
-													<div v-else-if="event.shouldAttend" class="has-text-success">
-														Attending
-													</div>
-													<div v-else class="has-text-danger">
-														Not attending
-													</div>
+												<div v-else-if="event.confirmed && !event.shouldAttend" class="has-text-success">
+													<span class="icon is-medium">
+														<i class="fas fa-times fa-lg"></i>
+													</span>
+												</div>
+												<div v-else-if="!event.confirmed && event.shouldAttend" class="has-text-grey">
+													<span class="icon is-medium">
+														<i class="fas fa-check fa-lg"></i>
+													</span>
+												</div>
+												<div v-else-if="!event.confirmed && !event.shouldAttend" class="has-text-grey">
+													<span class="icon is-medium">
+														<i class="fas fa-times fa-lg"></i>
+													</span>
 												</div>
 											</td>
 											<td v-else style="text-align: center">
-												<div :class="{ 'is-size-7': true, 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
+												<div :class="{ 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
 													<span class="icon is-medium">
 														<i v-if="event.didAttend" class="fas fa-check fa-lg"></i>
 														<i v-else class="fas fa-times fa-lg"></i>
-													</span>
-													<br>
-													<span v-if="event.didAttend">
-														Attended
-													</span>
-													<span v-else-if="!event.shouldAttend">
-														Excused
-													</span>
-													<span v-else>
-														Missed
 													</span>
 												</div>
 											</td>
