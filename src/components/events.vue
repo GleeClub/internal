@@ -21,11 +21,14 @@
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
 												<div @click.stop>
-													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded is-success" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend">
+													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded" :class="{ 'is-success': event.confirmed, 'is-danger': !event.confirmed, 'is-outlined': !event.confirmed }" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend && event.confirmed">
 													<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
 												</div>
 												<div class="is-size-7" style="white-space: nowrap">
-													<div v-if="event.shouldAttend" class="has-text-success">
+													<div v-if="!event.confirmed" class="has-text-danger">
+														Unconfirmed
+													</div>
+													<div v-else-if="event.shouldAttend" class="has-text-success">
 														Attending
 													</div>
 													<div v-else class="has-text-danger">
@@ -144,7 +147,13 @@ export default {
 			return this.filter.includes(event.type)
 		},
 		rsvp(event) {
-			this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) { }, function(data) {
+			if (!event.confirmed) {
+				event.shouldAttend = !event.shouldAttend
+				this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) {
+					event.confirmed = true
+				})
+			}
+			else this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) { }, function(data) {
 				event.shouldAttend = !event.shouldAttend
 			})
 		}
