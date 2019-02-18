@@ -5,49 +5,58 @@
 				<div class="columns">
 					<div class="column">
 						<div class="box">
-							<table class="table is-fullwidth is-hoverable">
-								<thead></thead>
-								<tbody>
-									<tr v-for="event in events" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })">
-										<td>{{ event.name }}</td>
-										<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
-										<td>{{ event.type }}</td>
-										<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
-											<div @click.stop>
-												<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded is-success" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend">
-												<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
-											</div>
-											<div class="is-size-7" style="white-space: nowrap">
-												<div v-if="event.shouldAttend" class="has-text-success">
-													Attending
+							<spinner v-if="!loaded"></spinner>
+							<div v-else-if="events.length > 0">
+								<div class="buttons has-addons">
+									<a v-for="info, id in common.info.eventTypes" class="button is-small" @click="toggleFilter(id)" :style="{ color: filter.includes(id) ? info.color : 'white', background: filter.includes(id) ? 'white' : info.color }">
+										{{ info.name }}
+									</a>
+								</div>
+								<table class="table is-fullwidth is-hoverable">
+									<thead></thead>
+									<tbody>
+										<tr v-for="event in events" v-if="matchesFilter(event)" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })">
+											<td :style="{ width: '1em', padding: '0', background: common.info.eventTypes[event.type].color }"></td>
+											<td>{{ event.name }}</td>
+											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
+											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
+												<div @click.stop>
+													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded is-success" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.cannotDecline != null && event.shouldAttend">
+													<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
 												</div>
-												<div v-else class="has-text-danger">
-													Not attending
+												<div class="is-size-7" style="white-space: nowrap">
+													<div v-if="event.shouldAttend" class="has-text-success">
+														Attending
+													</div>
+													<div v-else class="has-text-danger">
+														Not attending
+													</div>
 												</div>
-											</div>
-										</td>
-										<td v-else style="text-align: center">
-											<div :class="{ 'is-size-7': true, 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
-												<span class="icon is-medium">
-													<i v-if="event.didAttend" class="fas fa-check fa-lg"></i>
-													<i v-else class="fas fa-times fa-lg"></i>
-												</span>
-												<br>
-												<span v-if="event.didAttend">
-													Attended
-												</span>
-												<span v-else-if="!event.shouldAttend">
-													Excused
-												</span>
-												<span v-else>
-													Missed
-												</span>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-								<tfoot></tfoot>
-							</table>
+											</td>
+											<td v-else style="text-align: center">
+												<div :class="{ 'is-size-7': true, 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
+													<span class="icon is-medium">
+														<i v-if="event.didAttend" class="fas fa-check fa-lg"></i>
+														<i v-else class="fas fa-times fa-lg"></i>
+													</span>
+													<br>
+													<span v-if="event.didAttend">
+														Attended
+													</span>
+													<span v-else-if="!event.shouldAttend">
+														Excused
+													</span>
+													<span v-else>
+														Missed
+													</span>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+									<tfoot></tfoot>
+								</table>
+							</div>
+							<p v-else>No events yet this semester.</p>
 						</div>
 					</div>
 					<div class="column">
@@ -73,8 +82,9 @@
 								<p>Section: {{ deets.section }}</p>
 								<p>Type: {{ deets.type }}</p>
 								<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
+								<router-link class="button" v-if="moment.unix(deets.release).isAfter(moment()) && deets.cannotDecline" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
 							</div>
-							<component v-else :is="page" :event="deets.id"></component>
+							<component v-else :is="common.kebabToCamel(page)" @switch-page="$router.push({ name: 'event', params: { id: id, page: $event } })" :event="deets.id"></component>
 						</div>
 						<div v-else class="box">
 							<p>Select an event</p>
@@ -89,23 +99,29 @@
 <script>
 import common from "@/common"
 import moment from "moment"
+import spinner from "./util/spinner"
 import attendees from "./event/attendees"
 import carpools from "./event/carpools"
 import setlist from "./event/setlist"
+import absenceRequest from "./event/absence-request"
 
 export default {
 	name: "events",
 	props: ["id", "page"],
 	components: {
+		spinner,
 		attendees,
 		carpools,
-		setlist
+		setlist,
+		absenceRequest,
 	},
 	data() {
 		return {
 			common: common,
 			moment: moment,
-			events: []
+			loaded: false,
+			events: [],
+			filter: [],
 		}
 	},
 	computed: {
@@ -118,6 +134,15 @@ export default {
 		}
 	},
 	methods: {
+		toggleFilter(id) {
+			var existing = this.filter.indexOf(id)
+			if (existing >= 0) this.filter.splice(existing, 1)
+			else this.filter.push(id)
+		},
+		matchesFilter(event) {
+			if (this.filter.length == 0) return true
+			return this.filter.includes(event.type)
+		},
 		rsvp(event) {
 			this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) { }, function(data) {
 				event.shouldAttend = !event.shouldAttend
@@ -128,6 +153,7 @@ export default {
 		var self = this
 		common.apiGet("events", {}, function(data) {
 			self.events = data.events.sort(function(a, b) { return b.call - a.call; })
+			self.loaded = true
 		})
 	}
 }

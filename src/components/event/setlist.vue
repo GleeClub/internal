@@ -1,6 +1,7 @@
 <template>
 	<div id="setlist">
-		<table v-if="songs.length > 0" class="table is-fullwidth is-hoverable">
+		<spinner v-if="!loaded"></spinner>
+		<table v-else-if="songs.length > 0" class="table is-fullwidth is-hoverable">
 			<tbody>
 				<tr v-for="(song, idx) in songs" :key="song.id">
 					<td>{{ idx + 1 }}</td>
@@ -18,13 +19,18 @@
 
 <script>
 import common from "@/common"
+import spinner from "../util/spinner"
 
 export default {
 	name: "setlist",
 	props: ["event"],
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,
+			loaded: false,
 			songs: []
 		}
 	},
@@ -32,6 +38,7 @@ export default {
 		var self = this
 		common.apiGet("setList", { event: this.event }, function(data) {
 			self.songs = data.songs
+			self.loaded = true
 		})
 	}
 }

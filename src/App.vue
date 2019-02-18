@@ -41,7 +41,8 @@
 				</div>
 			</div>
 		</section>
-		<router-view v-if="common.user.authenticated" @reload="loadUser"></router-view>
+		<spinner v-if="loaded < 2"></spinner>
+		<router-view v-else-if="common.user.authenticated" @reload="loadUser"></router-view>
 		<component v-else :is="landingPage" @reload="loadUser" @switch-page="landingPage = $event"></component>
 	</div>
 </template>
@@ -51,16 +52,19 @@ import common from "./common"
 import login from "@/components/login"
 import register from "@/components/edit-profile"
 import forgot from "@/components/forgot"
+import spinner from "@/components/util/spinner"
 
 export default {
 	name: "app",
 	components: {
 		login,
 		register,
-		forgot
+		forgot,
+		spinner,
 	},
 	data() {
 		return {
+			loaded: 0,
 			common: common,
 			landingPage: "login",
 			showConfirm: false,
@@ -69,9 +73,11 @@ export default {
 	},
 	methods: {
 		loadUser() {
+			this.loaded = false;
 			var self = this
 			common.apiGet("info", {}, function(data) {
 				self.common.info = data.info
+				self.loaded += 1
 			})
 			common.apiGet("user", {}, function(data) {
 				self.common.user = data
@@ -81,9 +87,11 @@ export default {
 						for (var member of data.members) {
 							self.common.members[member.email] = member.name
 						}
+						self.loaded += 1
 					})
 					self.showConfirm = self.common.user.enrollment == "inactive";
 				}
+				else self.loaded += 1
 			})
 		}
 	},

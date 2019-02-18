@@ -3,7 +3,8 @@
 		<section class="section">
 			<div class="container">
 				<div class="box">
-					<table class="table is-fullwidth">
+					<spinner v-if="!loaded"></spinner>
+					<table v-else class="table is-fullwidth">
 						<thead>
 							<tr>
 								<td>Name</td>
@@ -31,19 +32,25 @@
 
 <script>
 import common from "@/common"
+import spinner from "./util/spinner"
 
 export default {
 	name: "roster",
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,
-			members: []
+			loaded: false,
+			members: [],
 		}
 	},
 	mounted() {
 		var self = this;
 		common.apiGet("members", {}, function(data) {
 			self.members = data.members
+			self.loaded = true
 		})
 	}
 }

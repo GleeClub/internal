@@ -1,6 +1,7 @@
 <template>
 	<div id="attendees">
-		<table class="table is-fullwidth is-hoverable">
+		<spinner v-if="!loaded"></spinner>
+		<table v-else class="table is-fullwidth is-hoverable">
 			<tbody>
 				<tr v-for="member in attendees" :key="member.id">
 					<td><router-link :to="{ name: 'profile', params: { id: member.id } }">{{ common.memberName(member.id) }}</router-link></td>
@@ -14,13 +15,18 @@
 
 <script>
 import common from "@/common"
+import spinner from "../util/spinner"
 
 export default {
 	name: "attendees",
 	props: ["event"],
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,
+			loaded: false,
 			attendees: [],
 		}
 	},
@@ -28,6 +34,7 @@ export default {
 		var self = this
 		common.apiGet("attendees", { event: this.event }, function(data) {
 			self.attendees = data.attendees
+			self.loaded = true
 		})
 	}
 }

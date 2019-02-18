@@ -200,6 +200,7 @@
 						<button type="submit" class="button is-primary">Save</button>
 					</div>
 				</form>
+				<spinner v-else></spinner>
 			</div>
 		</div>
 	</section>
@@ -207,9 +208,13 @@
 
 <script>
 import common from "@/common"
+import spinner from "./util/spinner"
 
 export default {
 	name: "edit-profile",
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,

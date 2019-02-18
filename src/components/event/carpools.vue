@@ -1,6 +1,7 @@
 <template>
 	<div id="carpools">
-		<ul v-if="carpools.length > 0">
+		<spinner v-if="!loaded"></spinner>
+		<ul v-else-if="carpools.length > 0">
 			<li v-for="carpool in carpools" :key="carpool.id">
 				{{ carpool.driver }}
 				<ul>
@@ -18,13 +19,18 @@
 
 <script>
 import common from "@/common"
+import spinner from "../util/spinner"
 
 export default {
 	name: "carpools",
 	props: ["event"],
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,
+			loaded: false,
 			carpools: []
 		}
 	},
@@ -32,6 +38,7 @@ export default {
 		var self = this
 		common.apiGet("carpools", { event: this.event }, function(data) {
 			self.carpools = data.carpools
+			self.loaded = true
 		})
 	}
 }

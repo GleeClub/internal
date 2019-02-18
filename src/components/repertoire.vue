@@ -6,7 +6,8 @@
 					<div class="column">
 						<div class="box">
 							<h1 class="title is-4">Current</h1>
-							<table class="table is-fullwidth is-hoverable">
+							<spinner v-if="!loaded"></spinner>
+							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
 									<tr v-for="song in current" :key="song.id" :class="{ 'is-selected': id && id == song.id }" @click="select(song)">
 										<td>{{ song.title }}</td>
@@ -16,7 +17,8 @@
 						</div>
 						<div class="box">
 							<h1 class="title is-4">Other</h1>
-							<table class="table is-fullwidth is-hoverable">
+							<spinner v-if="!loaded"></spinner>
+							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
 									<tr v-for="song in other" :key="song.id" :class="{'is-selected': id && id == song.id}" @click="select(song)">
 										<td>{{ song.title }}</td>
@@ -51,13 +53,18 @@
 
 <script>
 import common from "@/common"
+import spinner from "./util/spinner"
 
 export default {
 	name: "repertoire",
 	props: ["id"],
+	components: {
+		spinner,
+	},
 	data() {
 		return {
 			common: common,
+			loaded: false,
 			songs: [],
 			musicDir: null
 		}
@@ -96,6 +103,7 @@ export default {
 		common.apiGet("songs", {}, function(data) {
 			self.songs = data.songs
 			self.musicDir = data.music_dir
+			self.loaded = true
 		})
 	}
 }
