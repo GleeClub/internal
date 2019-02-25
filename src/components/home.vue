@@ -3,7 +3,7 @@
 		<section class="section">
 			<div class="container">
 				<h1 class="title">Score</h1>
-				<p>Right now you have a <strong>{{ attendance.finalScore }}</strong>. {{ attendanceMessage }}</p>
+				<p>Right now you have a <strong>{{ events.finalScore }}</strong>. {{ attendanceMessage }}</p>
 				<svg></svg>
 				<p id="attendanceIssue"><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
 			</div>
@@ -22,9 +22,9 @@
 					<div class="column">
 						<h1 class="title">Volunteerism</h1>
 						<div class="box">
-							<p>OK so you've only been to {{ common.roman(attendance.gigCount) }} volunteer gigs this semester and you need to go to {{ common.roman(attendance.gigReq) }}. So. Uh, you know, do that.</p>
+							<p>OK so you've only been to {{ common.roman(events.gigCount) }} volunteer gigs this semester and you need to go to {{ common.roman(events.gigReq) }}. So. Uh, you know, do that.</p>
 							<p style="text-align: center">
-								<span v-if="attendance">
+								<span v-if="events">
 									<span v-for="(n, i) in gigDots" :key="i">
 										<span v-if="n" class="icon is-large is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.date).format(dateFmtLong)"><i class="fas fa-check-circle fa-2x"></i>
 										</span>
@@ -53,13 +53,13 @@ export default {
 			moment: moment,
 			d3: d3,
 			dateFmtLong: "dddd, MMMM D [at] h:mm A",
-			attendance: {
-				attendance: [],
+			events: {
+				events: [],
+				pastEvents: [],
 				finalScore: 0,
 				gigCount: 0,
 				gigReq: 0
-			},
-			events: []
+			}
 		}
 	},
 	methods: {
@@ -84,13 +84,17 @@ export default {
 			var div = d3.select("#tooltip")
 				.attr("class", "box")
 				.attr("class", "hidden");
-			var attendance = this.attendance;
-			attendance.attendance.forEach(function (d) { d.date = new Date(d.date * 1000); });
+			var attendance = this.events;
+			attendance.pastEvents = [];
+			attendance.events.forEach(function (d) { d.call = new Date(d.call * 1000); });
+			attendance.events.forEach(function (d) {
+				if(d.pointChange !== null) attendance.pastEvents.push(d);
+			});
 			var x = d3.scaleTime()
 				.rangeRound([margin.left, width-margin.right]);
 			var y = d3.scaleLinear()
 				.rangeRound([height-margin.bottom, margin.top]);
-			x.domain(d3.extent(attendance.attendance, function(d) { return d.date; }));
+			x.domain(d3.extent(attendance.events, function(d) { return d.call; }));
 			y.domain([0, 100]);
 			svg.append("g")
 				.attr("transform", "translate(0," + (height - margin.bottom) + ")")
@@ -99,33 +103,33 @@ export default {
 				.attr("transform", "translate(" + margin.left + ", 0)")
 				.call(d3.axisLeft(y));
 			var valueline = d3.line()
-					.x(function(d) { return x(d.date); })
+					.x(function(d) { return x(d.call); })
 					.y(function(d) {
 						if (d.partialScore > 0) return y(d.partialScore);
 						else return y(0);
 					})
 					.curve(d3.curveMonotoneX); //http://bl.ocks.org/d3indepth/b6d4845973089bc1012dec1674d3aff8
-			attendance.attendance.unshift({
-				"date": attendance.attendance[0].date,
+			attendance.pastEvents.unshift({
+				"call": attendance.pastEvents[0].call,
 				"partialScore": 0
 			});
-			attendance.attendance.push({
-				"date":attendance.attendance[attendance.attendance.length - 1].date,
+			attendance.pastEvents.push({
+				"call":attendance.pastEvents[attendance.pastEvents.length - 1].call,
 				"partialScore": 0
 			});
 			svg.append("path")
-				.datum(attendance.attendance)
+				.datum(attendance.pastEvents)
 				.attr("class", "line")
 				.attr("d", valueline);
-			attendance.attendance.shift();
-			attendance.attendance.pop();
+			attendance.pastEvents.shift();
+			attendance.pastEvents.pop();
 
 			var svgContainer = svg;
 			svgContainer.selectAll("circle")
-				.data(attendance.attendance)
+				.data(attendance.pastEvents)
 				.enter()
 				.append("circle")
-				.attr("cx", function (d) { return x(d.date); })
+				.attr("cx", function (d) { return x(d.call); })
 				.attr("cy", function (d) {
 					if (d.partialScore > 0) return y(d.partialScore);
 					else return y(0);
@@ -136,7 +140,7 @@ export default {
 				.on("mouseover touchdown", function(d) {
 					div.attr("class", "box shown");
 					div.append("p").html("<strong>" + d.name + "</strong>");
-					div.append("p").html(moment(d.date).format(this.dateFmtLong));
+					div.append("p").html(moment(d.call).format(this.dateFmtLong));
 					div.append("p").html(d.pointChange + " points <span v-else class='icon is-primary has-text-primary'><i class='fas fa-arrow-right'></i></span> " + d.partialScore + "%");
 					div.append("p").html("<em>" + d.explanation + "</em>");
 					div.attr("style", "position:absolute;left:" + d3.event.pageX + "px;top:" + d3.event.pageY + "px;");
@@ -149,11 +153,11 @@ export default {
 	},
 	computed: {
 		gigDots() {
-			var ret = new Array(this.attendance.gigReq)
+			var ret = new Array(this.events.gigReq)
 			var dotcounter = 0
-			for (var i = 0; i < this.attendance.attendance.length; i++) {
-				if (this.attendance.attendance[i].gigCount) {
-					ret[dotcounter] = this.attendance.attendance[i]
+			for (var i = 0; i < this.events.events.length; i++) {
+				if (this.events.events[i].gigCount) {
+					ret[dotcounter] = this.events.events[i]
 					dotcounter++
 					if (dotcounter + 1 == this.attendance.gigReq) break
 				}
@@ -162,23 +166,23 @@ export default {
 		},
 		nextEvents() {
 			var now = moment().unix()
-			return this.events
+			return this.events.events
 				.filter(function(e) { return e.call > now })
 				.sort(function(a, b) { return a.call - b.call })
 				.slice(0, 5)
 		},
 		attendanceMessage() {
-			if (this.attendance.finalScore >= 90) return "Ayy lamo nice."
-			else if (this.attendance.finalScore >= 80) return "OK not bad, I guess."
-			else if (this.attendance.finalScore >= 70) return "Pls"
+			if (this.events.finalScore >= 90) return "Ayy lamo nice."
+			else if (this.events.finalScore >= 80) return "OK not bad, I guess."
+			else if (this.events.finalScore >= 70) return "Pls"
 			else return "BRUH get it together."
 		}
 	},
 	mounted() {
 		var self = this;
-		common.apiGet("attendance", {}, function(data) {
-			self.attendance = data
-			if (self.attendance.attendance.length) self.drawAttendanceGraph()
+		common.apiGet("events", {}, function(data) {
+			self.events = data
+			if (self.events.events.length) self.drawAttendanceGraph()
 			else {
 				var newp = d3.select(".container").insert("p", "svg")
 				newp.html("New semester, new you! Make it count.")
@@ -188,9 +192,6 @@ export default {
 				d3.select(".container").select("p").append("br")
 				d3.select("#attendanceIssue").remove()
 			}
-		})
-		common.apiGet("events", {}, function(data) {
-			self.events = data.events
 		})
 	}
 }
