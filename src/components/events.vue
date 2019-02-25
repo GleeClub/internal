@@ -7,16 +7,15 @@
 						<div class="box">
 							<spinner v-if="!loaded"></spinner>
 							<div v-else-if="events.length > 0">
-								<div class="buttons has-addons">
-									<a v-for="info, id in common.info.eventTypes" class="button is-small" @click="toggleFilter(id)" :style="{ color: filter.includes(id) ? info.color : 'white', background: filter.includes(id) ? 'white' : info.color }">
+								<div class="buttons">
+									<a v-for="info, id in common.info.eventTypes" class="button is-rounded is-light" @click="toggleFilter(id)" :class="{'is-primary':filter.includes(id)}">
 										{{ info.name }}
 									</a>
 								</div>
 								<table class="table is-fullwidth is-hoverable">
 									<thead></thead>
 									<tbody>
-										<tr v-for="event in events" v-if="matchesFilter(event)" :key="event.id" :class="{ 'is-selected': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })">
-											<td :style="{ width: '1em', padding: '0', background: common.info.eventTypes[event.type].color }"></td>
+										<tr v-for="event in events" v-if="matchesFilter(event)" :key="event.id" :class="{ '': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })" :style="{'background-color' : id && id == event.id ? '#eeeeee':''}">
 											<td>{{ event.name }}</td>
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
@@ -72,13 +71,27 @@
 								</ul>
 							</div>
 							<div v-if="page == 'details'">
-								<h1>{{ deets.name }}</h1>
-								<p>Be there at: {{ moment.unix(deets.call).format("LLLL") }}</p>
-								<p>{{ deets.comments }}</p>
+								<h1 class="title is-3">{{ deets.name }}</h1>
+								<p class="subtitle is-5">{{ moment.unix(deets.call).format("LLLL") }}<br>{{ deets.location }}
+								</p>
+								<p v-if="deets.comments">{{ deets.comments }}<br></p>
+
+								<div v-if="moment.unix(deets.release).isAfter(moment())">
+									<p v-if="deets.confirmed && deets.shouldAttend">You're confirmed to be attending</p>
+									<p v-if="deets.confirmed && !deets.shouldAttend">The officers know you won't be there</p>
+									<p v-if="!deets.confirmed && deets.shouldAttend">You're coming, right?</p>
+									<p v-if="!deets.confirmed && !deets.shouldAttend">You're not coming, right?</p>
+								</div>
+								<div v-else>
+									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time.</p>
+									<p v-if="deets.didAttend && !deets.shouldAttend">Wow, thanks for coming. What a guy!</p>
+									<p v-if="!deets.didAttend && deets.shouldAttend">You weren't there, and that's not ok.</p>
+									<p v-if="!deets.didAttend && !deets.shouldAttend">You weren't there, but that's ok.</p>
+								</div>
+
 								<p>Confirmed: {{ deets.confirmed }}</p>
 								<p>Should Attend: {{ deets.shouldAttend }}</p>
 								<p>Attended: {{ deets.didAttend }}</p>
-								<p>Location: {{ deets.location }}</p>
 								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
 								<p>Points: {{ deets.points }}</p>
 								<p>Section: {{ deets.section }}</p>
