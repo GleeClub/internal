@@ -26,7 +26,7 @@
 							<p style="text-align: center">
 								<span v-if="events">
 									<span v-for="(n, i) in gigDots" :key="i">
-										<span v-if="n" class="icon is-large is-tooltip-primary is-primary tooltip has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.call).format(dateFmtLong)"><i class="fas fa-check-circle fa-2x"></i>
+										<span v-if="n" class="icon is-large tooltip is-tooltip-multiline has-text-primary" v-bind:data-tooltip="n.name + ' on ' + moment(n.call).format(dateFmtLong)"><i class="fas fa-check-circle fa-2x"></i>
 										</span>
 										<span v-else class="icon is-large is-primary has-text-primary"><i class="far fa-frown fa-2x"></i></span>
 									</span>

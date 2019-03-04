@@ -19,10 +19,6 @@
 											<td>{{ event.name }}</td>
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
-												<!-- <div @click.stop>
-													<input type="checkbox" :id="'attending-' + event.id" name="attending" class="switch is-rounded" :class="{ 'is-success': event.confirmed, 'is-danger': !event.confirmed, 'is-outlined': !event.confirmed }" v-model="event.shouldAttend" @change="rsvp(event)" :disabled="event.disabled != null && event.shouldAttend && event.confirmed">
-													<label :for="'attending-' + event.id" style="margin-right: -0.5em"></label>
-												</div> -->
 												<div v-if="event.confirmed && event.shouldAttend" class="has-text-success">
 													<span class="icon is-medium">
 														<i class="fas fa-check fa-lg"></i>
@@ -45,7 +41,7 @@
 												</div>
 											</td>
 											<td v-else style="text-align: center">
-												<div :class="{ 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap">
+												<div :class="{ 'has-text-success': event.didAttend || !event.shouldAttend, 'has-text-danger': event.shouldAttend && !event.didAttend }" style="white-space: nowrap;">
 													<span class="icon is-medium">
 														<i v-if="event.didAttend" class="fas fa-check fa-lg"></i>
 														<i v-else class="fas fa-times fa-lg"></i>
@@ -74,30 +70,26 @@
 								<h1 class="title is-3">{{ deets.name }}</h1>
 								<p class="subtitle is-5">{{ moment.unix(deets.call).format("LLLL") }}<br>{{ deets.location }}
 								</p>
-								<p v-if="deets.comments">{{ deets.comments }}<br></p>
+								<p v-if="deets.comments">{{ deets.comments }}<br><br></p>
 
 								<div v-if="moment.unix(deets.release).isAfter(moment())">
-									<p v-if="deets.confirmed && deets.shouldAttend">You're confirmed to be attending</p>
+									<p v-if="deets.confirmed && deets.shouldAttend">You're <b>confirmed</b> to be <b>attending</b></p>
 									<p v-if="deets.confirmed && !deets.shouldAttend">The officers know you won't be there</p>
-									<p v-if="!deets.confirmed && deets.shouldAttend">You're coming, right?</p>
-									<p v-if="!deets.confirmed && !deets.shouldAttend">You're not coming, right?</p>
+									<span v-if="!deets.confirmed && deets.shouldAttend"><p>You're coming, right?</p><a class="button is-primary">Yep, I'll be there</a></span>
+									<span v-if="!deets.confirmed && !deets.shouldAttend"><p>You're not coming, right?</p><a class="button is-primary">Nah, I'm gonna miss it</a></span>
 								</div>
 								<div v-else>
 									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time.</p>
 									<p v-if="deets.didAttend && !deets.shouldAttend">Wow, thanks for coming. What a guy!</p>
-									<p v-if="!deets.didAttend && deets.shouldAttend">You weren't there, and that's not ok.</p>
-									<p v-if="!deets.didAttend && !deets.shouldAttend">You weren't there, but that's ok.</p>
-								</div>
+									<p v-if="!deets.didAttend && deets.shouldAttend">You <b>weren't there</b>, and that's <b>not ok</b>. <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> if there's a problem.</p>
+									<p v-if="!deets.didAttend && !deets.shouldAttend">You <b>weren't there</b>, but that's <b>ok</b>.</p>
+								</div><br>
 
-								<p>Confirmed: {{ deets.confirmed }}</p>
-								<p>Should Attend: {{ deets.shouldAttend }}</p>
-								<p>Attended: {{ deets.didAttend }}</p>
 								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
-								<p>Points: {{ deets.points }}</p>
-								<p>Section: {{ deets.section }}</p>
-								<p>Type: {{ deets.type }}</p>
-								<p v-if="deets.uniform">Uniform: {{ deets.uniform }}</p>
-								<router-link class="button" v-if="moment.unix(deets.release).isAfter(moment()) && deets.disabled" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
+								<p>This event is worth <b>{{ deets.points }} points</b></p>
+								<p v-if="deets.section != 'None'">This event is for the {{ deets.section }} section</p>
+								<p style="text-decoration: underline dotted;" v-if="deets.uniform"><span style="cursor:pointer;" class="tooltip is-tooltip-multiline" :data-tooltip="this.common.info.uniforms[deets.uniform].description">{{ this.common.info.uniforms[deets.uniform].name }}</span></p><br>
+								<router-link class="button is-primary is-outlined" v-if="moment.unix(deets.release).isAfter(moment()) && deets.disabled" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
 							</div>
 							<component v-else :is="common.kebabToCamel(page)" @switch-page="$router.push({ name: 'event', params: { id: id, page: $event } })" :event="deets.id"></component>
 						</div>

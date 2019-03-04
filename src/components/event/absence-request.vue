@@ -7,7 +7,7 @@
 			</div>
 		</div>
 		<div class="buttons is-right">
-			<button type="button" class="button" @click="$emit('switch-page', 'details')">Never Mind</button>
+			<button type="button" class="button" @click="$emit('switch-page', 'details')">jk nvm</button>
 			<button type="submit" class="button is-primary">Beg for Mercy</button>
 		</div>
 	</form>
