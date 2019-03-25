@@ -8,6 +8,7 @@ import officer from "@/components/officer"
 import profile from "@/components/profile"
 import editProfile from "@/components/edit-profile"
 import confirmAccount from "@/components/confirm-account"
+import minutes from "@/components/minutes"
 
 Vue.use(Router)
 
@@ -25,5 +26,8 @@ export default new Router({
 		{ path: "/officer/:page", name: "officer", component: officer, props: true },
 		{ path: "/profile", component: editProfile },
 		{ path: "/confirm", name: "confirm", component: confirmAccount },
+		{ path: "/minutes", component: minutes },
+		{ path: "/minutes/:id", redirect: "/minutes/:id/public" },
+		{ path: "/minutes/:id/:page", name: "minutes", component: minutes, props: true },
 	]
 })
