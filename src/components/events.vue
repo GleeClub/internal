@@ -73,10 +73,20 @@
 								<p v-if="deets.comments">{{ deets.comments }}<br><br></p>
 
 								<div v-if="moment.unix(deets.release).isAfter(moment())">
-									<p v-if="deets.confirmed && deets.shouldAttend">You're <b>confirmed</b> to be <b>attending</b></p>
-									<p v-if="deets.confirmed && !deets.shouldAttend">The officers know you won't be there</p>
-									<span v-if="!deets.confirmed && deets.shouldAttend"><p>You're coming, right?</p><a class="button is-primary">Yep, I'll be there</a></span>
-									<span v-if="!deets.confirmed && !deets.shouldAttend"><p>You're not coming, right?</p><a class="button is-primary">Nah, I'm gonna miss it</a></span>
+									<span v-if="deets.confirmed && deets.shouldAttend">
+										<p>You're <b>confirmed</b> to be <b>attending</b></p>
+									</span>
+									<span v-if="deets.confirmed && !deets.shouldAttend">
+										<p>The officers know you won't be there</p>
+									</span>
+									<span v-if="!deets.confirmed && deets.shouldAttend">
+										<p>You're coming, right?</p>
+										<a class="button is-primary">Yep, I'll be there</a>
+									</span>
+									<span v-if="!deets.confirmed && !deets.shouldAttend">
+										<p>You're not coming, right?</p>
+										<a class="button is-primary">Nah, I'm gonna miss it</a>
+									</span>
 								</div>
 								<div v-else>
 									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time.</p>
@@ -88,7 +98,7 @@
 								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
 								<p>This event is worth <b>{{ deets.points }} points</b></p>
 								<p v-if="deets.section != 'None'">This event is for the {{ deets.section }} section</p>
-								<p style="text-decoration: underline dotted;" v-if="deets.uniform"><span style="cursor:pointer;" class="tooltip is-tooltip-multiline" :data-tooltip="this.common.info.uniforms[deets.uniform].description">{{ this.common.info.uniforms[deets.uniform].name }}</span></p><br>
+								<p v-if="deets.uniform"><span>{{ this.common.info.uniforms[deets.uniform].name }}</span> <span style="cursor:pointer;" class="icon tooltip is-tooltip-multiline has-text-grey-light is-small" :data-tooltip="this.common.info.uniforms[deets.uniform].description"><i class="far fa-question-circle"></i></span></p><br>
 								<router-link class="button is-primary is-outlined" v-if="moment.unix(deets.release).isAfter(moment()) && deets.disabled" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
 							</div>
 							<component v-else :is="common.kebabToCamel(page)" @switch-page="$router.push({ name: 'event', params: { id: id, page: $event } })" :event="deets.id"></component>
