@@ -5,18 +5,20 @@
 				<div class="columns">
 					<div class="column is-narrow">
 						<aside class="menu">
-							<ul class="menu-list">
-								<li><router-link to="/officer/create-event">Create Event</router-link></li>
-								<li><router-link to="/officer/gig-requests">Gig Requests</router-link></li>
-								<li><router-link to="/officer/make-announcement">Make Announcement</router-link></li>
-								<li><router-link to="/officer/absence-requests">Absence Requests</router-link></li>
-								<li><router-link to="/officer/edit-semester">Edit Semester</router-link></li>
-								<li><router-link to="/officer/officers">Officer Positions</router-link></li>
-								<li><router-link to="/officer/permissions">Site Permissions</router-link></li>
-								<li><router-link to="/officer/uniforms">Uniforms</router-link></li>
-								<li><router-link to="/officer/dues">Dues</router-link></li>
-								<li><router-link to="/officer/document-links">Document Links</router-link></li>
-							</ul>
+							<div class="box">
+								<ul class="menu-list">
+									<li><router-link to="/officer/create-event">Create Event</router-link></li>
+									<li><router-link to="/officer/gig-requests">Gig Requests</router-link></li>
+									<li><router-link to="/officer/make-announcement">Make Announcement</router-link></li>
+									<li><router-link to="/officer/absence-requests">Absence Requests</router-link></li>
+									<li><router-link to="/officer/edit-semester">Edit Semester</router-link></li>
+									<li><router-link to="/officer/officers">Officer Positions</router-link></li>
+									<li><router-link to="/officer/permissions">Site Permissions</router-link></li>
+									<li><router-link to="/officer/uniforms">Uniforms</router-link></li>
+									<li><router-link to="/officer/dues">Dues</router-link></li>
+									<li><router-link to="/officer/document-links">Document Links</router-link></li>
+								</ul>
+							</div>
 						</aside>
 					</div>
 					<div class="column">
