@@ -10,7 +10,7 @@
 								<table class="table is-fullwidth is-hoverable">
 									<thead></thead>
 									<tbody>
-										<tr v-for="m in minutes" :key="m.id" :class="{ 'is-selected': sel && sel.id == m.id }" @click="$router.replace({ name: 'minutes', params: { id: m.id, page: 'public' } })">
+										<tr v-for="m in minutes" :key="m.id" :style="{'background-color' : sel && sel.id == m.id ? '#eeeeee':''}" @click="$router.replace({ name: 'minutes', params: { id: m.id, page: 'public' } })">
 											<td>{{ m.name }}</td>
 										</tr>
 									</tbody>

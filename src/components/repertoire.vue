@@ -3,13 +3,13 @@
 		<section class="section">
 			<div class="container">
 				<div class="columns">
-					<div class="column">
+					<div class="column is-narrow">
 						<div class="box">
 							<h1 class="title is-4">Current</h1>
 							<spinner v-if="!loaded"></spinner>
 							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in current" :key="song.id" :class="{ 'is-selected': id && id == song.id }" @click="select(song)">
+									<tr v-for="song in current" :key="song.id" @click="select(song)" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
@@ -20,7 +20,7 @@
 							<spinner v-if="!loaded"></spinner>
 							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in other" :key="song.id" :class="{'is-selected': id && id == song.id}" @click="select(song)">
+									<tr v-for="song in other" :key="song.id" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}" @click="select(song)">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
