@@ -54,9 +54,10 @@ export default {
 			d3: d3,
 			dateFmtLong: "dddd, MMMM D [at] h:mm A",
 			dateFmtTimeless: "dddd, MMMM D",
+			past: [],
+			future: [],
 			events: {
 				events: [],
-				pastEvents: [],
 				finalScore: 0,
 				gigCount: 0,
 				gigReq: 0
@@ -85,17 +86,17 @@ export default {
 			var div = d3.select("#tooltip")
 				.attr("class", "box")
 				.attr("class", "hidden");
-			var attendance = this.events;
-			attendance.pastEvents = [];
-			attendance.events.forEach(function (d) { d.call = new Date(d.call * 1000); });
-			attendance.events.forEach(function (d) {
-				if(d.pointChange !== null) attendance.pastEvents.push(d);
+			var attendance = this.past;
+			var pastEvents = [];
+			attendance.forEach(function (d) { d.call = new Date(d.call * 1000); }); // FIXME Changing global state
+			attendance.forEach(function (d) {
+				if(d.pointChange !== null) pastEvents.push(d);
 			});
 			var x = d3.scaleTime()
 				.rangeRound([margin.left, width-margin.right]);
 			var y = d3.scaleLinear()
 				.rangeRound([height-margin.bottom, margin.top]);
-			x.domain(d3.extent(attendance.events, function(d) { return d.call; }));
+			x.domain(d3.extent(attendance, function(d) { return d.call; }));
 			y.domain([0, 100]);
 			svg.append("g")
 				.attr("transform", "translate(0," + (height - margin.bottom) + ")")
@@ -110,24 +111,24 @@ export default {
 						else return y(0);
 					})
 					.curve(d3.curveMonotoneX); //http://bl.ocks.org/d3indepth/b6d4845973089bc1012dec1674d3aff8
-			attendance.pastEvents.unshift({
-				"call": attendance.pastEvents[0].call,
+			pastEvents.unshift({
+				"call": pastEvents[0].call,
 				"partialScore": 0
 			});
-			attendance.pastEvents.push({
-				"call":attendance.pastEvents[attendance.pastEvents.length - 1].call,
+			pastEvents.push({
+				"call":pastEvents[pastEvents.length - 1].call,
 				"partialScore": 0
 			});
 			svg.append("path")
-				.datum(attendance.pastEvents)
+				.datum(pastEvents)
 				.attr("class", "line")
 				.attr("d", valueline);
-			attendance.pastEvents.shift();
-			attendance.pastEvents.pop();
+			pastEvents.shift();
+			pastEvents.pop();
 
 			var svgContainer = svg;
 			svgContainer.selectAll("circle")
-				.data(attendance.pastEvents)
+				.data(pastEvents)
 				.enter()
 				.append("circle")
 				.attr("cx", function (d) { return x(d.call); })
@@ -154,21 +155,16 @@ export default {
 	},
 	computed: {
 		gigDots() {
-			var ret = new Array(this.events.gigReq)
-			var dotcounter = 0
-			for (var i = 0; i < this.events.events.length; i++) {
-				if (this.events.events[i].gigCount) {
-					ret[dotcounter] = this.events.events[i]
-					dotcounter++
-					if (dotcounter + 1 == this.events.gigReq) break
-				}
-			}
+			var ret = this.past
+				.filter(function(e) { return e.gigCount && e.didAttend })
+				.slice(0, 5)
+			while (ret.length < this.events.gigReq) ret.push(null)
+			console.log(ret)
 			return ret
 		},
 		nextEvents() {
 			var now = moment().unix()
-			return this.events.events
-				.filter(function(e) { return e.call > now })
+			return this.future
 				.sort(function(a, b) { return a.call - b.call })
 				.slice(0, 5)
 		},
@@ -183,7 +179,10 @@ export default {
 		var self = this;
 		common.apiGet("events", {}, function(data) {
 			self.events = data
-			if (self.events.events.length) self.drawAttendanceGraph()
+			var now = moment().unix()
+			self.past = data.events.filter(function(e) { return e.call < now })
+			self.future = data.events.filter(function(e) { return e.call >= now })
+			if (self.past.length) self.drawAttendanceGraph()
 			else {
 				var newp = d3.select(".container").insert("p", "svg")
 				newp.html("New semester, new you! Make it count.")

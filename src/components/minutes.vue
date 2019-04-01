@@ -66,7 +66,6 @@ export default {
 		id: {
 			immediate: true,
 			handler(newid, oldid) {
-				console.log([oldid, newid])
 				var self = this
 				var s = parseInt(newid)
 				if (!s || isNaN(s)) this.sel = null

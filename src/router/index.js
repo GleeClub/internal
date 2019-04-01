@@ -29,5 +29,6 @@ export default new Router({
 		{ path: "/minutes", component: minutes },
 		{ path: "/minutes/:id", redirect: "/minutes/:id/public" },
 		{ path: "/minutes/:id/:page", name: "minutes", component: minutes, props: true },
-	]
+	],
+	linkActiveClass: "is-active"
 })

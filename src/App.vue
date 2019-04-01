@@ -7,13 +7,13 @@
 						<i class="fas fa-home"></i>
 					</span>
 				</router-link>
-				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-bind:class="{'is-active': burgerIsActive}" v-on:click="burgerIsActive = !burgerIsActive">
+				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" :class="{'is-active': burgerIsActive}" @click="burgerIsActive = !burgerIsActive">
 				<span aria-hidden="true"></span>
 				<span aria-hidden="true"></span>
 				<span aria-hidden="true"></span>
 				</a>
 			</div>
-			<div class="navbar-menu" v-bind:class="{'is-active': burgerIsActive}">
+			<div class="navbar-menu">
 			<div v-if="common.user.authenticated" class="navbar-start">
 				<router-link to="/events" class="navbar-item">Events</router-link>
 				<router-link to="/repertoire" class="navbar-item">Music</router-link>
