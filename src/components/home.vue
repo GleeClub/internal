@@ -3,7 +3,7 @@
 		<section class="section">
 			<div class="container">
 				<h1 class="title">Score</h1>
-				<p>Right now you have a <strong>{{ events.finalScore }}</strong>. <span class="has-text-grey is-italic">{{ attendanceMessage }}</span></p>
+				<p>Right now you have a <strong>{{ events.finalScore }}</strong>.<br><span class="has-text-grey-light is-italic">{{ attendanceMessage }}</span></p>
 				<svg></svg>
 				<p id="attendanceIssue"><br>Do you have an issue? Do you need a daddy tissue? <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> to cry about it.</p>
 			</div>
@@ -87,6 +87,7 @@ export default {
 				.attr("class", "box")
 				.attr("class", "hidden");
 			var attendance = this.past;
+			// attendance.push(this.future)
 			var pastEvents = [];
 			attendance.forEach(function (d) { d.call = new Date(d.call * 1000); }); // FIXME Changing global state
 			attendance.forEach(function (d) {

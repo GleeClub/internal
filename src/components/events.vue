@@ -3,7 +3,7 @@
 		<section class="section">
 			<div class="container">
 				<div class="columns">
-					<div class="column">
+					<div class="column is-half">
 						<div class="box">
 							<spinner v-if="!loaded"></spinner>
 							<div v-else-if="events.length > 0">
@@ -15,7 +15,7 @@
 								<table class="table is-fullwidth is-hoverable">
 									<thead></thead>
 									<tbody>
-										<tr v-for="event in events" v-if="matchesFilter(event)" :key="event.id" :class="{ '': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } })" :style="{'background-color' : id && id == event.id ? '#eeeeee':''}">
+										<tr v-for="event in events" v-if="matchesFilter(event)" :key="event.id" :class="{ '': id && id == event.id }" @click="$router.replace({ name: 'event', params: { id: event.id, page: 'details' } });$el.querySelector('#deetsBox').scrollIntoView({behavior: 'smooth'})" :style="{'background-color' : id && id == event.id ? '#eeeeee':''}">
 											<td>{{ event.name }}</td>
 											<td>{{ moment.unix(event.call).format("MMM D h:mm A") }}</td>
 											<td v-if="moment.unix(event.release).isAfter(moment())" style="text-align: center">
@@ -57,7 +57,7 @@
 						</div>
 					</div>
 					<div class="column">
-						<div class="box" v-if="deets">
+						<div class="box is-6" v-if="deets" id="deetsBox" style="position:fixed;margin-right:24px;">
 							<div class="tabs">
 								<ul>
 									<li :class="{ 'is-active': page && page == 'details' }"><router-link :to="{ name: 'event', params: { id: id, page: 'details' } }">Details</router-link></li>
@@ -87,11 +87,14 @@
 										<p>You're not coming, right?</p>
 										<a class="button is-primary">Nah, I'm gonna miss it</a>
 									</span>
+									<span v-if="deets.disabled" class="has-text-grey-light is-italic">
+										<p>{{ deets.disabled }}</p>
+									</span>
 								</div>
 								<div v-else>
-									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time.</p>
+									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time. Real #tbt material.</p>
 									<p v-if="deets.didAttend && !deets.shouldAttend">Wow, thanks for coming. What a guy!</p>
-									<p v-if="!deets.didAttend && deets.shouldAttend">You <b>weren't there</b>, and that's <b>not ok</b>. <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> if there's a problem.</p>
+									<p v-if="!deets.didAttend && deets.shouldAttend">You <b>weren't there</b>, and that's <b>not ok</b>. <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> if you think that's not right.</p>
 									<p v-if="!deets.didAttend && !deets.shouldAttend">You <b>weren't there</b>, but that's <b>ok</b>.</p>
 								</div><br>
 

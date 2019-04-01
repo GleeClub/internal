@@ -31,13 +31,25 @@
 						<div class="box">
 							<div v-if="sel">
 								<h1 class="title is-4">{{ sel.title }}</h1>
-								<strong>Key:</strong> {{ sel.key }} — <strong>Starting pitch:</strong> {{ sel.pitch }}
-								<p>{{ sel.info }}</p>
+								<p v-if="sel.info">{{ sel.info }}</p><br v-if="sel.info">
+								<p>Key: <b>{{ sel.key }}</b></p>
+								<p>Starting pitch: <b>{{ sel.pitch }}</b></p><br>
+								<a class="button is-large">
+									<span class="icon is-medium">
+										<i class="fas fa-file-audio"></i>
+									</span>
+									<span>Bass</span>
+								</a>
 								<table class="table is-fullwidth">
 									<tr v-for="link in sel.links" :key="link.id">
 										<td>{{ link.type }}</td>
 										<td>
-											<a :href="getLink(link.type, link.target)">{{ link.name }}</a>
+											<a v-if="link.type == 'pdf'" class="button is-large" :href="getLink(link.type, link.target)">
+												<span class="icon is-medium">
+													<i class="fas fa-file"></i>
+												</span>
+												<span>{{link.name}}</span>
+											</a>
 										</td>
 									</tr>
 								</table>
