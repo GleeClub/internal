@@ -9,7 +9,7 @@
 							<spinner v-if="!loaded"></spinner>
 							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in current" :key="song.id" @click="select(song)" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}">
+									<tr v-for="song in current" :key="song.id" @click="select(song);$el.querySelector('#musicDeetsBox').scrollIntoView({behavior: 'smooth'})" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
@@ -20,7 +20,7 @@
 							<spinner v-if="!loaded"></spinner>
 							<table v-else class="table is-fullwidth is-hoverable">
 								<tbody>
-									<tr v-for="song in other" :key="song.id" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}" @click="select(song)">
+									<tr v-for="song in other" :key="song.id" :style="{'background-color' : id && id == song.id ? '#eeeeee':''}" @click="select(song);$el.querySelector('#musicDeetsBox').scrollIntoView({behavior: 'smooth'})">
 										<td>{{ song.title }}</td>
 									</tr>
 								</tbody>
@@ -28,28 +28,39 @@
 						</div>
 					</div>
 					<div class="column">
-						<div class="box">
+						<div class="box" id="musicDeetsBox">
 							<div v-if="sel">
 								<h1 class="title is-4">{{ sel.title }}</h1>
 								<p v-if="sel.info">{{ sel.info }}</p><br v-if="sel.info">
 								<p>Key: <b>{{ sel.key }}</b></p>
 								<p>Starting pitch: <b>{{ sel.pitch }}</b></p><br>
-								<a class="button is-large">
-									<span class="icon is-medium">
-										<i class="fas fa-file-audio"></i>
-									</span>
-									<span>Bass</span>
-								</a>
 								<table class="table is-fullwidth">
 									<tr v-for="link in sel.links" :key="link.id">
-										<td>{{ link.type }}</td>
-										<td>
+										<td style="border:none;">{{ link.type }}</td>
+										<td style="border:none;">
 											<a v-if="link.type == 'pdf'" class="button is-large" :href="getLink(link.type, link.target)">
 												<span class="icon is-medium">
 													<i class="fas fa-file"></i>
 												</span>
 												<span>{{link.name}}</span>
 											</a>
+											<a v-if="link.type == 'midi'" class="button is-large" :href="getLink(link.type, link.target)">
+												<span class="icon is-medium has-text-primary">
+													<i class="fas fa-file-audio"></i>
+												</span>
+												<span>{{link.name}}</span>
+											</a>
+											<span v-if="link.type == 'video'" style="display: flex;align-items: center;">
+												<a class="button is-large" :href="getLink(link.type, link.target)" target="_blank">
+													<span class="icon is-medium has-text-danger">
+														<i class="fab fa-youtube"></i>
+													</span>
+													<span>{{link.name}}</span>
+												</a>
+												<span class="icon has-text-grey-light is-medium">
+													<i class="fas fa-external-link-alt"></i>
+												</span>
+											</span>											
 										</td>
 									</tr>
 								</table>

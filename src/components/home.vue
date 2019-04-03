@@ -86,8 +86,7 @@ export default {
 			var div = d3.select("#tooltip")
 				.attr("class", "box")
 				.attr("class", "hidden");
-			var attendance = this.past;
-			// attendance.push(this.future)
+			var attendance = this.past.concat(this.future);
 			var pastEvents = [];
 			attendance.forEach(function (d) { d.call = new Date(d.call * 1000); }); // FIXME Changing global state
 			attendance.forEach(function (d) {
@@ -128,9 +127,10 @@ export default {
 			pastEvents.pop();
 
 			var svgContainer = svg;
-			svgContainer.selectAll("circle")
+			var circleSelect = svgContainer.selectAll("circle")
 				.data(pastEvents)
-				.enter()
+				.enter();
+			circleSelect
 				.append("circle")
 				.attr("cx", function (d) { return x(d.call); })
 				.attr("cy", function (d) {
@@ -139,7 +139,16 @@ export default {
 				})
 				.attr("r", function () { return 4; })
 				.attr("class", "attendanceDot")
-				.attr("stroke-width", 3)
+				.attr("stroke-width", 3);
+			circleSelect
+				.append("circle")
+				.attr("cx", function (d) { return x(d.call); })
+				.attr("cy", function (d) {
+					if (d.partialScore > 0) return y(d.partialScore);
+					else return y(0);
+				})
+				.attr("r", function () { return 8; })
+				.attr("fill-opacity", "0")
 				.on("mouseover touchdown", function(d) {
 					div.attr("class", "box shown");
 					div.append("p").html("<strong>" + d.name + "</strong>");

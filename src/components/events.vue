@@ -57,7 +57,7 @@
 						</div>
 					</div>
 					<div class="column">
-						<div class="box is-6" v-if="deets" id="deetsBox" style="position:fixed;margin-right:24px;">
+						<div class="box is-6" v-if="deets" id="deetsBox">
 							<div class="tabs">
 								<ul>
 									<li :class="{ 'is-active': page && page == 'details' }"><router-link :to="{ name: 'event', params: { id: id, page: 'details' } }">Details</router-link></li>
