@@ -1,7 +1,7 @@
 <template>
 	<div id="setlist">
 		<spinner v-if="!loaded"></spinner>
-		<table v-else-if="songs.length > 0" class="table is-fullwidth is-hoverable">
+		<table v-else-if="songs.length > 0" class="table is-fullwidth is-striped">
 			<tbody>
 				<tr v-for="(song, idx) in songs" :key="song.id">
 					<td>{{ idx + 1 }}</td>

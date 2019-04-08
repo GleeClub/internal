@@ -35,7 +35,49 @@
 								<p>Key: <b>{{ sel.key }}</b></p>
 								<p>Starting pitch: <b>{{ sel.pitch }}</b></p><br>
 								<table class="table is-fullwidth">
-									<tr v-for="link in sel.links" :key="link.id">
+									<tr v-if="sel.links.pdf">
+										<td style="border:none;">PDFs</td>
+										<td style="border:none;">
+											<div class="buttons">
+												<a v-for="link in sel.links.pdf" class="button is-outlined is-primary" :href="getLink(link.type, link.target)">
+													<span class="icon">
+														<i class="fas fa-scroll"></i>
+													</span>
+													<span>{{link.name}}</span>
+												</a>
+											</div>
+										</td>
+									</tr>
+									<tr v-if="sel.links.midi">
+										<td style="border:none;">MIDIs</td>
+										<td style="border:none;">
+											<div class="buttons">
+												<a v-for="link in sel.links.midi" class="button is-outlined is-primary" :href="getLink(link.type, link.target)">
+													<span class="icon">
+														<i class="fas fa-volume-up"></i>
+													</span>
+													<span>{{link.name}}</span>
+												</a>
+											</div>
+										</td>
+									</tr>
+									<tr v-if="sel.links.video">
+										<td style="border:none;">Videos</td>
+										<td style="border:none;" class="buttons">
+											<span style="display: flex;align-items: center;" v-for="link in sel.links.video">
+												<a class="button" :href="getLink('video', link.target)" target="_blank">
+													<span class="icon has-text-danger">
+														<i class="fab fa-youtube"></i>
+													</span>
+												</a>
+												<p><span>{{link.name}}</span></p>
+												<span class="icon has-text-grey-lighter is-medium">
+													<i class="fas fa-external-link-alt"></i>
+												</span>
+											</span>	
+										</td>
+									</tr>
+									<!--<tr v-for="link in sel.links" :key="link.id">
 										<td style="border:none;">{{ link.type }}</td>
 										<td style="border:none;">
 											<a v-if="link.type == 'pdf'" class="button is-large" :href="getLink(link.type, link.target)">
@@ -62,7 +104,7 @@
 												</span>
 											</span>											
 										</td>
-									</tr>
+									</tr>-->
 								</table>
 							</div>
 							<p v-else>Select a song.</p>

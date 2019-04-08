@@ -1,9 +1,12 @@
 <template>
 	<div id="attendees">
 		<spinner v-if="!loaded"></spinner>
-		<table v-else class="table is-fullwidth is-hoverable">
+		<table v-else class="table is-fullwidth">
 			<tbody>
-				<tr v-for="member in attendees" :key="member.id">
+				<tr v-for="member in attendees" :key="member.id" :class="{ '': !member.shouldAttend && member.confirmed,
+						'is-italic has-text-grey-light': !member.shouldAttend && !member.confirmed,
+						'has-text-grey-light': member.shouldAttend && !member.confirmed,
+						'has-text-success': member.shouldAttend && member.confirmed, }">
 					<td><router-link :to="{ name: 'profile', params: { id: member.id } }">{{ common.memberName(member.id) }}</router-link></td>
 					<td>{{ member.shouldAttend ? "attending" : "not attending" }}</td>
 					<td>{{ member.confirmed ? "confirmed" : "unconfirmed" }}</td>

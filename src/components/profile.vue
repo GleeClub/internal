@@ -3,22 +3,26 @@
 		<section class="section">
 			<div class="container">
 				<div class="box">
-					<div v-if="info">
-						{{ info.name.full }}<br>
-						{{ info.positions.join(", ") }}<br>
-						{{ info.about ? info.about : "I don't have a quote" }}<br>
-						{{ info.email }}<br>
-						{{ common.formatPhone(info.phone) }}<br>
-						{{ info.location }}<br>
-						{{ info.major }}<br>
-						{{ info.car > 0 ? info.car + " passengers" : "No car" }}<br>
-						Year {{ info.year }}<br>
-						{{ common.info.sections[info.section] }}<br>
-						<div v-if="id == common.user.id">
-						<button type="button" class="button" @click="logout">Log Out</button>
-						<router-link to="/profile">Edit</router-link>
+					<div class="columns" v-if="info">
+						<div class="column is-narrow">
+							<img :src="info.picture ? info.picture : 'http://lorempixel.com/g/256/256'">
 						</div>
-						<img :src="info.picture ? info.picture : 'http://lorempixel.com/g/256/256'">
+						<div class="column">
+							{{ info.name.full }}<br>
+							{{ info.positions.join(", ") }}<br>
+							{{ info.about ? info.about : "I don't have a quote" }}<br>
+							<a :href="'mailto:' + info.email">{{ info.email }}</a><br>
+							<a :href="'tel:' + info.phone">{{ common.formatPhone(info.phone) }}</a><br>
+							{{ info.location }}<br>
+							{{ info.major }}<br>
+							{{ info.car > 0 ? info.car + " passengers" : "No car" }}<br>
+							Year {{ info.year }}<br>
+							{{ common.info.sections[info.section] }}<br>
+							<div v-if="id == common.user.id">
+							<button type="button" class="button" @click="logout">Log Out</button>
+							<router-link to="/profile">Edit</router-link>
+						</div>
+					</div>
 					</div>
 					<spinner v-else></spinner>
 				</div>
