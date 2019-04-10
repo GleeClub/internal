@@ -16,7 +16,7 @@
 						<h1 class="title">Next Up</h1>
 						<div class="box">
 							<p v-if="nextEvents.length == 0">No more events this semester (:(</p>
-							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><router-link :to="'events/' + event.id"> {{ event.name }} – {{ moment.unix(event.call).fromNow() }}</router-link></p>
+							<p v-else v-for="(event, i) in nextEvents" :key="i"> <span class="tag is-primary is-rounded">{{ i + 1 }}</span><router-link :to="'events/' + event.id"> {{ event.name }} – {{ moment(event.call).fromNow() }}</router-link></p>
 						</div>
 					</div>
 					<div class="column">
