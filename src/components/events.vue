@@ -78,14 +78,17 @@
 									</span>
 									<span v-if="deets.confirmed && !deets.shouldAttend">
 										<p>The officers know you won't be there</p>
+										<a class="button is-primary">sike I can come. put me in coach!</a>
 									</span>
-									<span v-if="!deets.confirmed && deets.shouldAttend">
+									<span v-if="!deets.confirmed && deets.shouldAttend && !deets.disabled">
 										<p>You're coming, right?</p>
-										<a class="button is-primary">Yep, I'll be there</a>
+										<a class="button is-primary" @click="rsvp(deets, true)">Yep, I'll be there</a>
+										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">Sorry fam, not this time</a>
 									</span>
-									<span v-if="!deets.confirmed && !deets.shouldAttend">
+									<span v-if="!deets.confirmed && !deets.shouldAttend && !deets.disabled">
 										<p>You're not coming, right?</p>
 										<a class="button is-primary">Nah, I'm gonna miss it</a>
+										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">akshually I can come. you're welcome</a>
 									</span>
 									<span v-if="deets.disabled" class="has-text-grey-light is-italic">
 										<p>{{ deets.disabled }}</p>
@@ -101,7 +104,7 @@
 								<p v-if="deets.perform">Perform at: {{ moment.unix(deets.perform).format("h:mm A") }}</p>
 								<p>This event is worth <b>{{ deets.points }} points</b></p>
 								<p v-if="deets.section != 'None'">This event is for the {{ deets.section }} section</p>
-								<p v-if="deets.uniform"><span>{{ this.common.info.uniforms[deets.uniform].name }}</span> <span style="cursor:pointer;" class="icon tooltip is-tooltip-multiline has-text-grey-light is-small" :data-tooltip="this.common.info.uniforms[deets.uniform].description"><i class="far fa-question-circle"></i></span></p><br>
+								<p v-if="deets.uniform"><span>{{ this.common.info.uniforms[deets.uniform].name }}</span> <span style="cursor:pointer;" class="icon tooltip is-tooltip-multiline has-text-grey-light is-small" :data-tooltip="this.common.info.uniforms[deets.uniform].description"><i class="far fa-question-circle"></i></span><br></p>
 								<router-link class="button is-primary is-outlined" v-if="moment.unix(deets.release).isAfter(moment()) && deets.disabled" :to="{ name: 'event', params: { id: id, page: 'absence-request' } }">Request Absence</router-link>
 							</div>
 							<component v-else :is="common.kebabToCamel(page)" @switch-page="$router.push({ name: 'event', params: { id: id, page: $event } })" :event="deets.id"></component>
@@ -163,18 +166,23 @@ export default {
 			if (this.filter.length == 0) return true
 			return this.filter.includes(event.type)
 		},
-		rsvp(event) {
-			if (!event.confirmed) {
-				event.shouldAttend = !event.shouldAttend
-				this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) {
-					event.confirmed = true
-					event.disabled = data.disabled
+		rsvp(gcEvent, gonnaAttend) {
+			var oldClassName = event.target.className
+			event.target.className = event.target.className+" is-loading"
+			if (!gonnaAttend) gcEvent.shouldAttend = false
+			if (gonnaAttend) {
+				this.common.apiGet("rsvp", { event: gcEvent.id, attend: gcEvent.shouldAttend ? 1 : 0 }, function(data) {
+					gcEvent.confirmed = true
+					gcEvent.disabled = data.disabled
+					event.target.className = oldClassName
 				})
 			}
-			else this.common.apiGet("rsvp", { event: event.id, attend: event.shouldAttend ? 1 : 0 }, function(data) {
-				event.disabled = data.disabled
+			else this.common.apiGet("rsvp", { event: gcEvent.id, attend: gcEvent.shouldAttend ? 1 : 0 }, function(data) {
+				gcEvent.disabled = data.disabled
+				event.target.className = oldClassName
 			}, function(data) {
-				event.shouldAttend = !event.shouldAttend
+				gcEvent.shouldAttend = !gcEvent.shouldAttend
+				event.target.className = oldClassName
 			})
 		}
 	},
