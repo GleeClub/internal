@@ -65,15 +65,15 @@
 										<td style="border:none;">Videos</td>
 										<td style="border:none;" class="buttons">
 											<span style="display: flex;align-items: center;" v-for="link in sel.links.video">
+												<span class="icon has-text-grey-lighter" style="margin-right: .5rem;">
+													<i class="fas fa-external-link-alt"></i>
+												</span>
 												<a class="button" :href="getLink('video', link.target)" target="_blank">
 													<span class="icon has-text-danger">
 														<i class="fab fa-youtube"></i>
 													</span>
 												</a>
 												<p><span>{{link.name}}</span></p>
-												<span class="icon has-text-grey-lighter is-medium">
-													<i class="fas fa-external-link-alt"></i>
-												</span>
 											</span>	
 										</td>
 									</tr>

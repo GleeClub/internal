@@ -73,22 +73,23 @@
 								<p v-if="deets.comments">{{ deets.comments }}<br><br></p>
 
 								<div v-if="moment.unix(deets.release).isAfter(moment())">
-									<span v-if="deets.confirmed && deets.shouldAttend">
+									<span v-if="deets.confirmed && deets.shouldAttend && !deets.disabled">
 										<p>You're <b>confirmed</b> to be <b>attending</b></p>
+										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">oops jk, gotta dip</a>
 									</span>
-									<span v-if="deets.confirmed && !deets.shouldAttend">
+									<span v-if="deets.confirmed && !deets.shouldAttend && !deets.disabled">
 										<p>The officers know you won't be there</p>
 										<a class="button is-primary">sike I can come. put me in coach!</a>
 									</span>
 									<span v-if="!deets.confirmed && deets.shouldAttend && !deets.disabled">
 										<p>You're coming, right?</p>
-										<a class="button is-primary" @click="rsvp(deets, true)">Yep, I'll be there</a>
-										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">Sorry fam, not this time</a>
+										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">sorry fam, not this time</a>
+										<a class="button is-primary" @click="rsvp(deets, true)">yep, I'll be there</a>
 									</span>
 									<span v-if="!deets.confirmed && !deets.shouldAttend && !deets.disabled">
 										<p>You're not coming, right?</p>
-										<a class="button is-primary">Nah, I'm gonna miss it</a>
 										<a class="button is-primary is-outlined" @click="rsvp(deets, false)">akshually I can come. you're welcome</a>
+										<a class="button is-primary">nah, I'm gonna miss it</a>
 									</span>
 									<span v-if="deets.disabled" class="has-text-grey-light is-italic">
 										<p>{{ deets.disabled }}</p>
@@ -97,7 +98,7 @@
 								<div v-else>
 									<p v-if="deets.didAttend && deets.shouldAttend">You were there! What a great time. Real #tbt material.</p>
 									<p v-if="deets.didAttend && !deets.shouldAttend">Wow, thanks for coming. What a guy!</p>
-									<p v-if="!deets.didAttend && deets.shouldAttend">You <b>weren't there</b>, and that's <b>not ok</b>. <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> if you think that's not right.</p>
+									<p v-if="!deets.didAttend && deets.shouldAttend">You <b>weren't there</b>, and that's <b>not ok</b>. You lost {{deets.points}} points. <a href="mailto:gleeclub_officers@lists.gatech.edu?subject=Attendance%20Issue">Email the officers</a> if you think that's not right.</p>
 									<p v-if="!deets.didAttend && !deets.shouldAttend">You <b>weren't there</b>, but that's <b>ok</b>.</p>
 								</div><br>
 
