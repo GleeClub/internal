@@ -63,44 +63,92 @@ export default {
 		return ret
 	},
 
-	api(action, method, params, callback, errorCallback) {
-		var data
+	api(method, path, params, callback, errorCallback) {
+		var data = null
 		var headers = {}
-		if (process.env.NODE_ENV == "development") headers["x-identity"] = process.env.TEST_AUTH
-		if (method == "get") {
-			params.action = action
-			data = null
+		if (process.env.NODE_ENV == "development") {
+			headers["token"] = process.env.TEST_AUTH
+		} else if (this.$cookies.get(keyName)) {
+			headers["token"] = this.$cookies.get(keyName)
 		}
-		else if (method == "post") {
+		if (method == "post") {
 			data = params
-			params = { action: action }
+			params = {}
 		}
+
 		axios({
-			url: "https://gleeclub.gatech.edu/buzz/api.php",
+			url: `https://gleeclub.gatech.edu/cgi-bin/api/${path}`,
 			method: method,
 			data: data,
 			params: params,
 			headers: headers
 		})
 		.then(function(response) {
-			var status = response.data.status
-			if (status == "ok") callback(response.data)
-			else {
-				alert(response.data.message)
-				if (errorCallback) errorCallback()
-			}
+			callback(response.data)
 		})
 		.catch(function (error) {
-			alert(error)
-			if (errorCallback) errorCallback()
+			if (errorCallback) {
+				errorCallback(response.data)
+			} else {
+				alert(response.data.message)
+			}
 		})
 	},
 
-	apiGet(action, params, callback, errorCallback = null) {
-		this.api(action, "get", params, callback, errorCallback)
+	apiGet(path, params, callback, errorCallback = null) {
+		this.api("get", path, params, callback, errorCallback)
 	},
 
-	apiPost(action, params, callback, errorCallback = null) {
-		this.api(action, "post", params, callback, errorCallback)
+	apiPost(path, params, callback, errorCallback = null) {
+		this.api("post", path, params, callback, errorCallback)
+	},
+
+	apiDelete(path, params, callback, errorCallback = null) {
+		this.api("delete", path, params, callback, errorCallback)
 	}
+
+	// api(action, method, params, callback, errorCallback) {
+	// 	var data
+	// 	var headers = {}
+	// 	if (process.env.NODE_ENV == "development") headers["x-identity"] = process.env.TEST_AUTH
+	// 	if (method == "get") {
+	// 		params.action = action
+	// 		data = null
+	// 	}
+	// 	else if (method == "post") {
+	// 		data = params
+	// 		params = { action: action }
+	// 	}
+	// 	axios({
+	// 		url: "https://gleeclub.gatech.edu/cgi-bin/api",
+	// 		method: method,
+	// 		data: data,
+	// 		params: params,
+	// 		headers: headers
+	// 	})
+	// 	.then(function(response) {
+	// 		var status = response.data.status
+	// 		if (status == "ok") callback(response.data)
+	// 		else {
+	// 			alert(response.data.message)
+	// 			if (errorCallback) errorCallback()
+	// 		}
+	// 	})
+	// 	.catch(function (error) {
+	// 		alert(error)
+	// 		if (errorCallback) errorCallback()
+	// 	})
+	// },
+
+	// apiGet(action, params, callback, errorCallback = null) {
+	// 	this.api(action, "get", params, callback, errorCallback)
+	// },
+
+	// apiPost(action, params, callback, errorCallback = null) {
+	// 	this.api(action, "post", params, callback, errorCallback)
+	// },
+
+	// apiDelete(action, params, callback, errorCallback = null) {
+	// 	this.api(action, "delete", params, callback, errorCallback)
+	// }
 }
