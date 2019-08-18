@@ -13,6 +13,7 @@
 									<li><router-link to="/officer/absence-requests">Absence Requests</router-link></li>
 									<li><router-link to="/officer/edit-semester">Edit Semester</router-link></li>
 									<li><router-link to="/officer/officers">Officer Positions</router-link></li>
+									<li><router-link to="/officer/announcements">Announcements</router-link></li>
 									<li><router-link to="/officer/permissions">Site Permissions</router-link></li>
 									<li><router-link to="/officer/uniforms">Uniforms</router-link></li>
 									<li><router-link to="/officer/dues">Dues</router-link></li>
@@ -41,6 +42,7 @@ import makeAnnouncement from "@/components/officer/make-announcement"
 import absenceRequests from "@/components/officer/absence-requests"
 import editSemester from "@/components/officer/edit-semester"
 import officers from "@/components/officer/officers"
+import announcements from "@/components/officer/announcements"
 import permissions from "@/components/officer/permissions"
 import uniforms from "@/components/officer/uniforms"
 import dues from "@/components/officer/dues"
@@ -56,6 +58,7 @@ export default {
 		absenceRequests,
 		editSemester,
 		officers,
+		announcements,
 		permissions,
 		uniforms,
 		dues,
