@@ -29,12 +29,12 @@
 														<i class="fas fa-times fa-lg"></i>
 													</span>
 												</div>
-												<div v-else-if="!event.confirmed && event.shouldAttend" class="has-text-grey">
+												<div v-else-if="!event.confirmed && event.shouldAttend" class="has-text-grey-light"><!-- I wish these icons could be outlined instead-->
 													<span class="icon is-medium">
 														<i class="fas fa-check fa-lg"></i>
 													</span>
 												</div>
-												<div v-else-if="!event.confirmed && !event.shouldAttend" class="has-text-grey">
+												<div v-else-if="!event.confirmed && !event.shouldAttend" class="has-text-grey-light">
 													<span class="icon is-medium">
 														<i class="fas fa-times fa-lg"></i>
 													</span>
