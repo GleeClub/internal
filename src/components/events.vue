@@ -79,7 +79,7 @@
 									</span>
 									<span v-if="deets.confirmed && !deets.shouldAttend && !deets.disabled">
 										<p>The officers know you won't be there</p>
-										<a class="button is-primary">sike I can come. put me in coach!</a>
+										<a class="button is-primary" @click="rsvp(deets, true)">sike I can come. put me in coach!</a>
 									</span>
 									<span v-if="!deets.confirmed && deets.shouldAttend && !deets.disabled">
 										<p>You're coming, right?</p>
@@ -174,7 +174,8 @@ export default {
 		rsvp(gcEvent, gonnaAttend) {
 			var oldClassName = event.target.className
 			event.target.className = event.target.className+" is-loading"
-			if (!gonnaAttend) gcEvent.shouldAttend = false
+			//if (!gonnaAttend) gcEvent.shouldAttend = false
+			gcEvent.shouldAttend = gonnaAttend
 			if (gonnaAttend) {
 				this.common.apiGet("rsvp", { event: gcEvent.id, attend: gcEvent.shouldAttend ? 1 : 0 }, function(data) {
 					gcEvent.confirmed = true
@@ -183,6 +184,7 @@ export default {
 				})
 			}
 			else this.common.apiGet("rsvp", { event: gcEvent.id, attend: gcEvent.shouldAttend ? 1 : 0 }, function(data) {
+				gcEvent.confirmed = true
 				gcEvent.disabled = data.disabled
 				event.target.className = oldClassName
 			}, function(data) {
@@ -195,7 +197,6 @@ export default {
 		var self = this
 		common.apiGet("events", {}, function(data) {
 			self.events = data.events.sort(function(a, b) { return b.call - a.call; })
-			console.log(self.events)
 			self.loaded = true
 		})
 	}
